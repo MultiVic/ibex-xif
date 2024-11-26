@@ -12,8 +12,8 @@ filesets:
       - lowrisc_xif:dv:dv_utils
       - lowrisc_xif:dv:crypto_dpi_prince:0.1
       - lowrisc_xif:dv:crypto_dpi_present:0.1
-      - lowrisc_xif:prim:cipher_pkg:0.1
-      - lowrisc_xif:prim:secded:0.1
+      - lowrisc:prim:cipher_pkg:0.1
+      - lowrisc:prim:secded:0.1
       - lowrisc_xif:ip:otp_ctrl_pkg:1.0
       - lowrisc_xif:ip:flash_ctrl_pkg
       - lowrisc_xif:dv:digestpp_dpi

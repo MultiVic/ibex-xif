@@ -8,7 +8,7 @@ description: "Common interfaces used in DV"
 filesets:
   files_dv:
     depend:
-      - lowrisc_xif:prim:assert
+      - lowrisc:prim:assert
       - lowrisc_xif:dv:pins_if
     files:
       - common_ifs_pkg.sv

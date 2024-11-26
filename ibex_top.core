@@ -10,13 +10,13 @@ filesets:
     depend:
       - lowrisc_xif:ibex:ibex_pkg
       - lowrisc_xif:ibex:ibex_core
-      - lowrisc_xif:prim:and2
-      - lowrisc_xif:prim:buf
-      - lowrisc_xif:prim:clock_mux2
-      - lowrisc_xif:prim:flop
-      - lowrisc_xif:prim:ram_1p_scr
-      - lowrisc_xif:prim:onehot_check
-      - lowrisc_xif:prim:onehot
+      - lowrisc:prim:and2
+      - lowrisc:prim:buf
+      - lowrisc:prim:clock_mux2
+      - lowrisc:prim:flop
+      - lowrisc:prim:ram_1p_scr
+      - lowrisc:prim:onehot_check
+      - lowrisc:prim:onehot
     files:
       - rtl/ibex_register_file_ff.sv # generic FF-based
       - rtl/ibex_register_file_fpga.sv # FPGA

@@ -10,7 +10,7 @@ filesets:
   all:
     depend:
       - lowrisc_xif:ibex:ibex_icache
-      - lowrisc_xif:prim:assert
+      - lowrisc:prim:assert
       - lowrisc_xif:util:sv2v
     files:
       - run.sby.j2 : {file_type: sbyConfigTemplate}

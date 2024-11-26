@@ -8,9 +8,9 @@ description: "Ibex CPU Core Components"
 filesets:
   files_rtl:
     depend:
-      - lowrisc_xif:prim:assert
-      - lowrisc_xif:prim:clock_gating
-      - lowrisc_xif:prim:lfsr
+      - lowrisc:prim:assert
+      - lowrisc:prim:clock_gating
+      - lowrisc:prim:lfsr
       - lowrisc_xif:ibex:ibex_pkg
       - lowrisc_xif:ibex:ibex_icache
       - lowrisc_xif:dv:dv_fcov_macros

@@ -7,8 +7,8 @@ description: "Ibex instruction cache"
 filesets:
   files_rtl:
     depend:
-      - lowrisc_xif:prim:secded
-      - lowrisc_xif:prim:assert
+      - lowrisc:prim:secded
+      - lowrisc:prim:assert
       - lowrisc_xif:ibex:ibex_pkg
     files:
       - rtl/ibex_icache.sv

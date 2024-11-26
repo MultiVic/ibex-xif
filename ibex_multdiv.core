@@ -8,7 +8,7 @@ description: "Multiplier and divider"
 filesets:
   files_rtl:
     depend:
-      - lowrisc_xif:prim:assert
+      - lowrisc:prim:assert
       - lowrisc_xif:ibex:ibex_pkg
     files:
       - rtl/ibex_multdiv_fast.sv
