@@ -2,7 +2,7 @@ CAPI=2:
 # Copyright lowRISC contributors.
 # Licensed under the Apache License, Version 2.0, see LICENSE for details.
 # SPDX-License-Identifier: Apache-2.0
-name: "lowrisc:lint:comportable:0.1"
+name: "lowrisc_xif:lint:comportable:0.1"
 description: "Waiver files for comportable IPs"
 filesets:
   files_verilator_waiver:

@@ -2,14 +2,14 @@ CAPI=2:
 # Copyright lowRISC contributors.
 # Licensed under the Apache License, Version 2.0, see LICENSE for details.
 # SPDX-License-Identifier: Apache-2.0
-name: "lowrisc:dv:dv_base_reg"
+name: "lowrisc_xif:dv:dv_base_reg"
 description: "DV base reg/mem library"
 
 filesets:
   files_dv:
     depend:
-      - lowrisc:dv:dv_utils
-      - lowrisc:prim:mubi
+      - lowrisc_xif:dv:dv_utils
+      - lowrisc_xif:prim:mubi
     files:
       - dv_base_reg_pkg.sv
       - csr_excl_item.sv: {is_include_file: true}

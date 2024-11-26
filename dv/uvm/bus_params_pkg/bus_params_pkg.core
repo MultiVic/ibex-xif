@@ -10,7 +10,7 @@ CAPI=2:
 # confused if both are used at once.
 #
 
-name: "lowrisc:ibex:bus_params_pkg"
+name: "lowrisc_xif:ibex:bus_params_pkg"
 description: "Top-level constants for Ibex, used by DV code"
 filesets:
   files_rtl:

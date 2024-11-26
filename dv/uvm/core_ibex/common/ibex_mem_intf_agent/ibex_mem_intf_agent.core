@@ -2,12 +2,12 @@ CAPI=2:
 # Copyright lowRISC contributors.
 # Licensed under the Apache License, Version 2.0, see LICENSE for details.
 # SPDX-License-Identifier: Apache-2.0
-name: "lowrisc:dv:ibex_mem_intf_agent:0.1"
+name: "lowrisc_xif:dv:ibex_mem_intf_agent:0.1"
 description: "IBEX DV UVM environment"
 filesets:
   files_dv:
     depend:
-      - lowrisc:dv:mem_model
+      - lowrisc_xif:dv:mem_model
     files:
       - ibex_mem_intf.sv
       - ibex_mem_intf_agent_pkg.sv

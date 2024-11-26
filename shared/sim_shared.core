@@ -2,14 +2,14 @@ CAPI=2:
 # Copyright lowRISC contributors.
 # Licensed under the Apache License, Version 2.0, see LICENSE for details.
 # SPDX-License-Identifier: Apache-2.0
-name: "lowrisc:ibex:sim_shared"
+name: "lowrisc_xif:ibex:sim_shared"
 description: "Collection of useful RTL for building simulations"
 filesets:
   files_sim_sv:
     depend:
-      - lowrisc:prim:assert
-      - lowrisc:prim:ram_1p
-      - lowrisc:prim:ram_2p
+      - lowrisc_xif:prim:assert
+      - lowrisc_xif:prim:ram_1p
+      - lowrisc_xif:prim:ram_2p
     files:
       - ./rtl/ram_1p.sv
       - ./rtl/ram_2p.sv

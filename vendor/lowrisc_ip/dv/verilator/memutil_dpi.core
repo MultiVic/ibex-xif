@@ -3,12 +3,12 @@ CAPI=2:
 # Licensed under the Apache License, Version 2.0, see LICENSE for details.
 # SPDX-License-Identifier: Apache-2.0
 
-name: "lowrisc:dv_verilator:memutil_dpi"
+name: "lowrisc_xif:dv_verilator:memutil_dpi"
 description: "DPI memory utilities"
 filesets:
   files_cpp:
     depend:
-      - lowrisc:dv:secded_enc
+      - lowrisc_xif:dv:secded_enc
     files:
       - cpp/dpi_memutil.cc
       - cpp/dpi_memutil.h: { is_include_file: true }

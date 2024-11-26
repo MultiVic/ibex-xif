@@ -2,13 +2,13 @@ CAPI=2:
 # Copyright lowRISC contributors.
 # Licensed under the Apache License, Version 2.0, see LICENSE for details.
 # SPDX-License-Identifier: Apache-2.0
-name: "lowrisc:ibex:ibex_top_tracing:0.1"
+name: "lowrisc_xif:ibex:ibex_top_tracing:0.1"
 description: "Ibex, a small RV32 CPU core with tracing enabled"
 filesets:
   files_rtl:
     depend:
-      - lowrisc:ibex:ibex_top
-      - lowrisc:ibex:ibex_tracer
+      - lowrisc_xif:ibex:ibex_top
+      - lowrisc_xif:ibex:ibex_tracer
     files:
       - rtl/ibex_top_tracing.sv
     file_type: systemVerilogSource

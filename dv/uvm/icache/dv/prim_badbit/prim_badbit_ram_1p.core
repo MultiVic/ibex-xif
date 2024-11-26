@@ -3,13 +3,13 @@ CAPI=2:
 # Licensed under the Apache License, Version 2.0, see LICENSE for details.
 # SPDX-License-Identifier: Apache-2.0
 
-name: "lowrisc:prim_badbit:ram_1p"
+name: "lowrisc_xif:prim_badbit:ram_1p"
 description: "Single-port RAM which allows a bound interface to inject errors"
 filesets:
   files_rtl:
     depend:
-      - lowrisc:prim_generic:ram_1p
-      - lowrisc:prim:assert
+      - lowrisc_xif:prim_generic:ram_1p
+      - lowrisc_xif:prim:assert
     files:
       - prim_badbit_ram_1p.sv
     file_type: systemVerilogSource

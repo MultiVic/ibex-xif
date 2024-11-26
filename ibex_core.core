@@ -2,18 +2,18 @@ CAPI=2:
 # Copyright lowRISC contributors.
 # Licensed under the Apache License, Version 2.0, see LICENSE for details.
 # SPDX-License-Identifier: Apache-2.0
-name: "lowrisc:ibex:ibex_core:0.1"
+name: "lowrisc_xif:ibex:ibex_core:0.1"
 description: "Ibex CPU Core Components"
 
 filesets:
   files_rtl:
     depend:
-      - lowrisc:prim:assert
-      - lowrisc:prim:clock_gating
-      - lowrisc:prim:lfsr
-      - lowrisc:ibex:ibex_pkg
-      - lowrisc:ibex:ibex_icache
-      - lowrisc:dv:dv_fcov_macros
+      - lowrisc_xif:prim:assert
+      - lowrisc_xif:prim:clock_gating
+      - lowrisc_xif:prim:lfsr
+      - lowrisc_xif:ibex:ibex_pkg
+      - lowrisc_xif:ibex:ibex_icache
+      - lowrisc_xif:dv:dv_fcov_macros
     files:
       - rtl/ibex_alu.sv
       - rtl/ibex_branch_predict.sv
@@ -44,7 +44,7 @@ filesets:
 
   files_check_tool_requirements:
     depend:
-     - lowrisc:tool:check_tool_requirements
+     - lowrisc_xif:tool:check_tool_requirements
 
 parameters:
   RVFI:

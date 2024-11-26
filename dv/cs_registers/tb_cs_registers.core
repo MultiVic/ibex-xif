@@ -3,7 +3,7 @@ CAPI=2:
 # Licensed under the Apache License, Version 2.0, see LICENSE for details.
 # SPDX-License-Identifier: Apache-2.0
 
-name: "lowrisc:ibex:tb_cs_registers"
+name: "lowrisc_xif:ibex:tb_cs_registers"
 description: "CS registers testbench"
 filesets:
   files_so:
@@ -32,14 +32,14 @@ filesets:
 
   files_verilator:
     depend:
-      - lowrisc:dv_verilator:simutil_verilator
+      - lowrisc_xif:dv_verilator:simutil_verilator
     files:
       - tb/tb_cs_registers.cc: { file_type: cppSource }
       - lint/verilator_waiver.vlt: {file_type: vlt}
 
   files_sim:
     depend:
-      - lowrisc:ibex:ibex_core
+      - lowrisc_xif:ibex:ibex_core
     files:
       - env/env_dpi.sv
       - rst_driver/rst_dpi.sv

@@ -2,14 +2,14 @@ CAPI=2:
 # Copyright lowRISC contributors.
 # Licensed under the Apache License, Version 2.0, see LICENSE for details.
 # SPDX-License-Identifier: Apache-2.0
-name: "lowrisc:ibex:ibex_simple_system_cosim"
+name: "lowrisc_xif:ibex:ibex_simple_system_cosim"
 description: "Generic simple system for running binaries on ibex using verilator"
 filesets:
   files_cosim:
     depend:
-      - lowrisc:dv:cosim_dpi
-      - lowrisc:ibex:ibex_simple_system_core
-      - lowrisc:tool:ibex_cosim_setup_check
+      - lowrisc_xif:dv:cosim_dpi
+      - lowrisc_xif:ibex:ibex_simple_system_core
+      - lowrisc_xif:tool:ibex_cosim_setup_check
     files:
       - simple_system_cosim.cc: { file_type: cppSource }
       - ibex_simple_system_cosim_checker.sv

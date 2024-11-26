@@ -2,7 +2,7 @@ CAPI=2:
 # Copyright lowRISC contributors.
 # Licensed under the Apache License, Version 2.0, see LICENSE for details.
 # SPDX-License-Identifier: Apache-2.0
-name: "lowrisc:lint:common:0.1"
+name: "lowrisc_xif:lint:common:0.1"
 description: "Common waivers"
 filesets:
   files_verilator:
@@ -21,7 +21,7 @@ filesets:
 
   files_check_tool_requirements:
     depend:
-     - lowrisc:tool:check_tool_requirements
+     - lowrisc_xif:tool:check_tool_requirements
 
 targets:
   default: &default_target

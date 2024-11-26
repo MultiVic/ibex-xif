@@ -2,13 +2,13 @@ CAPI=2:
 # Copyright lowRISC contributors.
 # Licensed under the Apache License, Version 2.0, see LICENSE for details.
 # SPDX-License-Identifier: Apache-2.0
-name: "lowrisc:ibex:ibex_riscv_compliance:0.1"
+name: "lowrisc_xif:ibex:ibex_riscv_compliance:0.1"
 description: "Ibex simulation for RISC-V compliance testing (using Verilator)"
 filesets:
   files_sim:
     depend:
-      - lowrisc:ibex:ibex_top_tracing
-      - lowrisc:ibex:sim_shared
+      - lowrisc_xif:ibex:ibex_top_tracing
+      - lowrisc_xif:ibex:sim_shared
     files:
       - rtl/ibex_riscv_compliance.sv
       - rtl/riscv_testutil.sv
@@ -16,8 +16,8 @@ filesets:
 
   files_verilator:
     depend:
-      - lowrisc:dv_verilator:memutil_verilator
-      - lowrisc:dv_verilator:simutil_verilator
+      - lowrisc_xif:dv_verilator:memutil_verilator
+      - lowrisc_xif:dv_verilator:simutil_verilator
     files:
       - ibex_riscv_compliance.cc: { file_type: cppSource }
       - lint/verilator_waiver.vlt: {file_type: vlt}

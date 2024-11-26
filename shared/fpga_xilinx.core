@@ -2,13 +2,13 @@ CAPI=2:
 # Copyright lowRISC contributors.
 # Licensed under the Apache License, Version 2.0, see LICENSE for details.
 # SPDX-License-Identifier: Apache-2.0
-name: "lowrisc:ibex:fpga_xilinx_shared"
+name: "lowrisc_xif:ibex:fpga_xilinx_shared"
 description: "Collection of useful RTL for Xilinx based examples"
 filesets:
   files_sv:
     depend:
-      - lowrisc:prim:ram_1p
-      - lowrisc:prim:ram_2p
+      - lowrisc_xif:prim:ram_1p
+      - lowrisc_xif:prim:ram_2p
     files:
       - rtl/fpga/xilinx/clkgen_xil7series.sv
       - rtl/fpga/xilinx/clkgen_xilusp.sv

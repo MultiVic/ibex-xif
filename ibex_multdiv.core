@@ -2,14 +2,14 @@ CAPI=2:
 # Copyright lowRISC contributors.
 # Licensed under the Apache License, Version 2.0, see LICENSE for details.
 # SPDX-License-Identifier: Apache-2.0
-name: "lowrisc:ibex:ibex_multdiv:0.1"
+name: "lowrisc_xif:ibex:ibex_multdiv:0.1"
 description: "Multiplier and divider"
 
 filesets:
   files_rtl:
     depend:
-      - lowrisc:prim:assert
-      - lowrisc:ibex:ibex_pkg
+      - lowrisc_xif:prim:assert
+      - lowrisc_xif:ibex:ibex_pkg
     files:
       - rtl/ibex_multdiv_fast.sv
       - rtl/ibex_multdiv_slow.sv

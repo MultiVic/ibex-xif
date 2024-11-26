@@ -2,7 +2,7 @@ CAPI=2:
 # Copyright lowRISC contributors.
 # Licensed under the Apache License, Version 2.0, see LICENSE for details.
 # SPDX-License-Identifier: Apache-2.0
-name: "lowrisc:dv:rst_shadowed_if"
+name: "lowrisc_xif:dv:rst_shadowed_if"
 description: "Shadowed reset pin interfaces used in DV"
 
 filesets:

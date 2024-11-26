@@ -2,17 +2,17 @@ CAPI=2:
 # Copyright lowRISC contributors.
 # Licensed under the Apache License, Version 2.0, see LICENSE for details.
 # SPDX-License-Identifier: Apache-2.0
-name: "lowrisc:dv:dv_lib"
+name: "lowrisc_xif:dv:dv_lib"
 description: "DV base class UVM library"
 
 filesets:
   files_dv:
     depend:
-      - lowrisc:dv:dv_utils
-      - lowrisc:dv:csr_utils
-      - lowrisc:dv:dv_base_reg
-      - lowrisc:dv:common_ifs
-      - lowrisc:ibex:bus_params_pkg
+      - lowrisc_xif:dv:dv_utils
+      - lowrisc_xif:dv:csr_utils
+      - lowrisc_xif:dv:dv_base_reg
+      - lowrisc_xif:dv:common_ifs
+      - lowrisc_xif:ibex:bus_params_pkg
     files:
       - dv_lib_pkg.sv
 

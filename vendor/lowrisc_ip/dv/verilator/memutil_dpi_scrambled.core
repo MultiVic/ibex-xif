@@ -3,13 +3,13 @@ CAPI=2:
 # Licensed under the Apache License, Version 2.0, see LICENSE for details.
 # SPDX-License-Identifier: Apache-2.0
 
-name: "lowrisc:dv_verilator:memutil_dpi_scrambled"
+name: "lowrisc_xif:dv_verilator:memutil_dpi_scrambled"
 description: "DPI memory utilities for scrambled memories"
 filesets:
   files_cpp:
     depend:
-      - lowrisc:dv_verilator:memutil_dpi
-      - lowrisc:dv:scramble_model
+      - lowrisc_xif:dv_verilator:memutil_dpi
+      - lowrisc_xif:dv:scramble_model
     files:
       - cpp/scrambled_ecc32_mem_area.cc
       - cpp/scrambled_ecc32_mem_area.h: { is_include_file: true }
