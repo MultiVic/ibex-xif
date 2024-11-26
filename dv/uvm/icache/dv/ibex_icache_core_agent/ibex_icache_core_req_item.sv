@@ -2,10 +2,10 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
-class ibex_icache_core_req_item extends uvm_sequence_item;
+class ibex_xif_icache_core_req_item extends uvm_sequence_item;
 
   // The type of transaction
-  rand ibex_icache_core_trans_type_e trans_type;
+  rand ibex_xif_icache_core_trans_type_e trans_type;
 
   // The branch address for a branch transaction (only has effect if trans_type is
   // ICacheCoreTransTypeBranch)
@@ -61,8 +61,8 @@ class ibex_icache_core_req_item extends uvm_sequence_item;
     new_seed dist { 0 :/ 1, [1:32'hffffffff] :/ (invalidate ? 1000 : enable ? 0 : 1) };
   }
 
-  `uvm_object_utils_begin(ibex_icache_core_req_item)
-    `uvm_field_enum(ibex_icache_core_trans_type_e, trans_type, UVM_DEFAULT)
+  `uvm_object_utils_begin(ibex_xif_icache_core_req_item)
+    `uvm_field_enum(ibex_xif_icache_core_trans_type_e, trans_type, UVM_DEFAULT)
     `uvm_field_int (branch_addr, UVM_DEFAULT | UVM_HEX)
     `uvm_field_int (enable,      UVM_DEFAULT)
     `uvm_field_int (invalidate,  UVM_DEFAULT)

@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
-interface ibex_icache_mem_if (input clk,
+interface ibex_xif_icache_mem_if (input clk,
                               input rst_n);
 
   // Requests
@@ -38,7 +38,7 @@ interface ibex_icache_mem_if (input clk,
   endclocking
 
   // Interface with SVA assertions
-  ibex_icache_mem_protocol_checker checker_i (.*);
+  ibex_xif_icache_mem_protocol_checker checker_i (.*);
 
 
   // Reset all the signals from the memory bus to the cache (the other direction is controlled by

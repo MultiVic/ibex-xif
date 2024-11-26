@@ -2,13 +2,13 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
-class ibex_icache_base_vseq
+class ibex_xif_icache_base_vseq
   extends dv_base_vseq #(
-    .CFG_T               (ibex_icache_env_cfg),
-    .COV_T               (ibex_icache_env_cov),
-    .VIRTUAL_SEQUENCER_T (ibex_icache_virtual_sequencer)
+    .CFG_T               (ibex_xif_icache_env_cfg),
+    .COV_T               (ibex_xif_icache_env_cov),
+    .VIRTUAL_SEQUENCER_T (ibex_xif_icache_virtual_sequencer)
   );
-  `uvm_object_utils(ibex_icache_base_vseq)
+  `uvm_object_utils(ibex_xif_icache_base_vseq)
   `uvm_object_new
 
   // The mem_err_shift parameter to use for the memory model with this sequence. Gets written to the
@@ -17,14 +17,14 @@ class ibex_icache_base_vseq
 
   // Non-null if this is an item after the first in a "combo" run, which runs several of these
   // sequences back-to-back. Must be set before pre_start to have any effect.
-  ibex_icache_base_vseq prev_sequence = null;
+  ibex_xif_icache_base_vseq prev_sequence = null;
 
   // The core and memory sequences. We don't subclass them in subclasses of this virtual sequence,
   // but we might want to set control knobs. To allow this, we construct the sequences in pre_start.
   // Subclasses should override pre_start, call this super to construct the sequence, and then set
   // any control knobs they need.
-  ibex_icache_core_base_seq core_seq;
-  ibex_icache_mem_resp_seq  mem_seq;
+  ibex_xif_icache_core_base_seq core_seq;
+  ibex_xif_icache_mem_resp_seq  mem_seq;
 
   // The number of transactions to run (passed to the core sequence). This gets randomised to
   // something sensible by default, but can be overridden by setting it before starting the
@@ -83,4 +83,4 @@ class ibex_icache_base_vseq
     core_seq.reset_ifs();
   endtask
 
-endclass : ibex_icache_base_vseq
+endclass : ibex_xif_icache_base_vseq

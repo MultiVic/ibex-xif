@@ -2,19 +2,19 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
-class ibex_icache_core_base_seq extends dv_base_seq #(
-    .REQ         (ibex_icache_core_req_item),
-    .RSP         (ibex_icache_core_rsp_item),
-    .CFG_T       (ibex_icache_core_agent_cfg),
-    .SEQUENCER_T (ibex_icache_core_sequencer)
+class ibex_xif_icache_core_base_seq extends dv_base_seq #(
+    .REQ         (ibex_xif_icache_core_req_item),
+    .RSP         (ibex_xif_icache_core_rsp_item),
+    .CFG_T       (ibex_xif_icache_core_agent_cfg),
+    .SEQUENCER_T (ibex_xif_icache_core_sequencer)
   );
-  `uvm_object_utils(ibex_icache_core_base_seq)
+  `uvm_object_utils(ibex_xif_icache_core_base_seq)
 
   `uvm_object_new
 
   // Non-null if this is an item after the first in a "combo" run, which runs several of these
   // sequences back-to-back. Must be set before pre_start to have any effect.
-  ibex_icache_core_base_seq prev_sequence = null;
+  ibex_xif_icache_core_base_seq prev_sequence = null;
 
   // If this is set, any branch target address should be within 64 bytes of base_addr and runs of
   // instructions should have a maximum length of 100.
@@ -106,7 +106,7 @@ class ibex_icache_core_base_seq extends dv_base_seq #(
   endtask
 
   // Generate and run a single item using class parameters
-  protected virtual task run_req(ibex_icache_core_req_item req, ibex_icache_core_rsp_item rsp);
+  protected virtual task run_req(ibex_xif_icache_core_req_item req, ibex_xif_icache_core_rsp_item rsp);
     start_item(req);
 
     if (constrain_branches && insns_since_branch >= 100)
@@ -184,8 +184,8 @@ class ibex_icache_core_base_seq extends dv_base_seq #(
   // Generate and run num_trans items. Subclasses probably want to configure the parameters above before
   // running this.
   protected task run_reqs();
-    req = ibex_icache_core_req_item::type_id::create("req");
-    rsp = ibex_icache_core_rsp_item::type_id::create("rsp");
+    req = ibex_xif_icache_core_req_item::type_id::create("req");
+    rsp = ibex_xif_icache_core_rsp_item::type_id::create("rsp");
 
     repeat (num_trans - 1) begin
       run_req(req, rsp);

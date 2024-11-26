@@ -2,15 +2,15 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
-class ibex_icache_core_back_line_seq extends ibex_icache_core_base_seq;
+class ibex_xif_icache_core_back_line_seq extends ibex_xif_icache_core_base_seq;
 
-  `uvm_object_utils(ibex_icache_core_back_line_seq)
+  `uvm_object_utils(ibex_xif_icache_core_back_line_seq)
   `uvm_object_new
 
   bit        req_phase = 0;
   bit [31:0] last_branch;
 
-  protected virtual task run_req(ibex_icache_core_req_item req, ibex_icache_core_rsp_item rsp);
+  protected virtual task run_req(ibex_xif_icache_core_req_item req, ibex_xif_icache_core_rsp_item rsp);
     bit [31:0] min_addr, max_addr;
 
     start_item(req);
@@ -51,4 +51,4 @@ class ibex_icache_core_back_line_seq extends ibex_icache_core_base_seq;
     req_phase = !req_phase;
   endtask
 
-endclass : ibex_icache_core_back_line_seq
+endclass : ibex_xif_icache_core_back_line_seq

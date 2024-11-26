@@ -2,8 +2,8 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
-interface ibex_icache_ram_if
-  import ibex_pkg::*;
+interface ibex_xif_icache_ram_if
+  import ibex_xif_pkg::*;
 #(
   parameter int TagSizeECC = IC_TAG_SIZE,
   parameter int LineSizeECC = IC_LINE_BEATS * BUS_SIZE
@@ -65,10 +65,10 @@ end
 function automatic gen_tag_err();
   bit   [TagSizeECC-1:0]     tag_mask;
   `DV_CHECK_STD_RANDOMIZE_WITH_FATAL(tag_sel_line, tag_sel_line dist {'b0 :/ dis_err_pct,
-                                      [1:$] :/ 100 - dis_err_pct};, ,"ibex_icache_ram_if")
+                                      [1:$] :/ 100 - dis_err_pct};, ,"ibex_xif_icache_ram_if")
   for (int i = 0; i < IC_NUM_WAYS; i++) begin
     `DV_CHECK_STD_RANDOMIZE_WITH_FATAL(tag_mask, $countones(tag_mask) inside {[1:2]};, ,
-                                       "ibex_icache_ram_if")
+                                       "ibex_xif_icache_ram_if")
     ic_tag_rdata_err[i] = tag_sel_line[i] ? ic_tag_rdata_in[i] ^ tag_mask : ic_tag_rdata_in[i];
   end
 endfunction
@@ -76,10 +76,10 @@ endfunction
 function automatic gen_data_err();
   bit   [LineSizeECC-1:0]    data_mask;
   `DV_CHECK_STD_RANDOMIZE_WITH_FATAL(data_sel_line, data_sel_line dist {'b0 :/ dis_err_pct,
-                                     [1:$] :/ 100 - dis_err_pct};, ,"ibex_icache_ram_if")
+                                     [1:$] :/ 100 - dis_err_pct};, ,"ibex_xif_icache_ram_if")
   for (int i = 0; i < IC_NUM_WAYS; i++) begin
     `DV_CHECK_STD_RANDOMIZE_WITH_FATAL(data_mask, $countones(data_mask) inside {[1:2]};, ,
-                                       "ibex_icache_ram_if")
+                                       "ibex_xif_icache_ram_if")
     ic_data_rdata_err[i] = data_sel_line[i] ? ic_data_rdata_in[i] ^ data_mask : ic_data_rdata_in[i];
   end
 endfunction

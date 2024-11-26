@@ -11,9 +11,9 @@
 `include "dv_fcov_macros.svh"
 
 /**
- * Top level module of the ibex RISC-V core
+ * Top level module of the ibex_xif RISC-V core
  */
-module ibex_core import ibex_pkg::*; #(
+module ibex_xif_core import ibex_xif_pkg::*; #(
   parameter bit          PMPEnable         = 1'b0,
   parameter int unsigned PMPGranularity    = 0,
   parameter int unsigned PMPNumRegions     = 4,
@@ -171,11 +171,11 @@ module ibex_core import ibex_pkg::*; #(
 
   // CPU Control Signals
   // SEC_CM: FETCH.CTRL.LC_GATED
-  input  ibex_mubi_t                   fetch_enable_i,
+  input  ibex_xif_mubi_t                   fetch_enable_i,
   output logic                         alert_minor_o,
   output logic                         alert_major_internal_o,
   output logic                         alert_major_bus_o,
-  output ibex_mubi_t                   core_busy_o
+  output ibex_xif_mubi_t                   core_busy_o
 );
 
   localparam int unsigned PMPNumChan      = 3;
@@ -397,17 +397,17 @@ module ibex_core import ibex_pkg::*; #(
     // For secure Ibex, the individual bits of core_busy_o are generated from different copies of
     // the various busy signal.
     localparam int unsigned NumBusySignals = 3;
-    localparam int unsigned NumBusyBits = $bits(ibex_mubi_t) * NumBusySignals;
+    localparam int unsigned NumBusyBits = $bits(ibex_xif_mubi_t) * NumBusySignals;
     logic [NumBusyBits-1:0] busy_bits_buf;
     prim_buf #(
       .Width(NumBusyBits)
     ) u_fetch_enable_buf (
-      .in_i ({$bits(ibex_mubi_t){ctrl_busy, if_busy, lsu_busy}}),
+      .in_i ({$bits(ibex_xif_mubi_t){ctrl_busy, if_busy, lsu_busy}}),
       .out_o(busy_bits_buf)
     );
 
     // Set core_busy_o to IbexMuBiOn if even a single input is high.
-    for (genvar i = 0; i < $bits(ibex_mubi_t); i++) begin : g_core_busy_bits
+    for (genvar i = 0; i < $bits(ibex_xif_mubi_t); i++) begin : g_core_busy_bits
       if (IbexMuBiOn[i] == 1'b1) begin : g_pos
         assign core_busy_o[i] =  |busy_bits_buf[i*NumBusySignals +: NumBusySignals];
       end else begin : g_neg
@@ -423,7 +423,7 @@ module ibex_core import ibex_pkg::*; #(
   // IF stage //
   //////////////
 
-  ibex_if_stage #(
+  ibex_xif_if_stage #(
     .DmHaltAddr       (DmHaltAddr),
     .DmExceptionAddr  (DmExceptionAddr),
     .DummyInstructions(DummyInstructions),
@@ -537,7 +537,7 @@ module ibex_core import ibex_pkg::*; #(
   end else begin : g_instr_req_gated_non_secure
     // For non secure Ibex only the bottom bit of fetch enable is considered
     logic unused_fetch_enable;
-    assign unused_fetch_enable = ^fetch_enable_i[$bits(ibex_mubi_t)-1:1];
+    assign unused_fetch_enable = ^fetch_enable_i[$bits(ibex_xif_mubi_t)-1:1];
 
     assign instr_req_gated = instr_req_int & fetch_enable_i[0];
     assign instr_exec      = fetch_enable_i[0];
@@ -547,7 +547,7 @@ module ibex_core import ibex_pkg::*; #(
   // ID stage //
   //////////////
 
-  ibex_id_stage #(
+  ibex_xif_id_stage #(
     .RV32E          (RV32E),
     .RV32M          (RV32M),
     .RV32B          (RV32B),
@@ -722,7 +722,7 @@ module ibex_core import ibex_pkg::*; #(
   // for RVFI only
   assign unused_illegal_insn_id = illegal_insn_id;
 
-  ibex_ex_block #(
+  ibex_xif_ex_block #(
     .RV32M          (RV32M),
     .RV32B          (RV32B),
     .BranchTargetALU(BranchTargetALU)
@@ -774,7 +774,7 @@ module ibex_core import ibex_pkg::*; #(
   assign data_req_o   = data_req_out & ~pmp_req_err[PMP_D];
   assign lsu_resp_err = lsu_load_err | lsu_store_err;
 
-  ibex_load_store_unit #(
+  ibex_xif_load_store_unit #(
     .MemECC(MemECC),
     .MemDataWidth(MemDataWidth)
   ) load_store_unit_i (
@@ -825,7 +825,7 @@ module ibex_core import ibex_pkg::*; #(
     .perf_store_o(perf_store)
   );
 
-  ibex_wb_stage #(
+  ibex_xif_wb_stage #(
     .ResetAll         (ResetAll),
     .WritebackStage   (WritebackStage),
     .DummyInstructions(DummyInstructions)
@@ -997,7 +997,7 @@ module ibex_core import ibex_pkg::*; #(
 
   // Keep track of the PC last seen in the ID stage when fetch is disabled
   logic [31:0]   pc_at_fetch_disable;
-  ibex_mubi_t    last_fetch_enable;
+  ibex_xif_mubi_t    last_fetch_enable;
 
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
@@ -1034,7 +1034,7 @@ module ibex_core import ibex_pkg::*; #(
   assign csr_wdata  = alu_operand_a_ex;
   assign csr_addr   = csr_num_e'(csr_access ? alu_operand_b_ex[11:0] : 12'b0);
 
-  ibex_cs_registers #(
+  ibex_xif_cs_registers #(
     .DbgTriggerEn     (DbgTriggerEn),
     .DbgHwBreakNum    (DbgHwBreakNum),
     .DataIndTiming    (DataIndTiming),
@@ -1174,7 +1174,7 @@ module ibex_core import ibex_pkg::*; #(
     assign pmp_req_type[PMP_D]  = data_we_o ? PMP_ACC_WRITE : PMP_ACC_READ;
     assign pmp_priv_lvl[PMP_D]  = priv_mode_lsu;
 
-    ibex_pmp #(
+    ibex_xif_pmp #(
       .PMPGranularity(PMPGranularity),
       .PMPNumChan    (PMPNumChan),
       .PMPNumRegions (PMPNumRegions)
@@ -1280,7 +1280,7 @@ module ibex_core import ibex_pkg::*; #(
   logic            new_nmi;
   logic            new_nmi_int;
   logic            new_irq;
-  ibex_pkg::irqs_t captured_mip;
+  ibex_xif_pkg::irqs_t captured_mip;
   logic            captured_nmi;
   logic            captured_nmi_int;
   logic            captured_debug_req;
@@ -1288,7 +1288,7 @@ module ibex_core import ibex_pkg::*; #(
 
   // RVFI extension for co-simulation support
   // debug_req and MIP captured at IF -> ID transition so one extra stage
-  ibex_pkg::irqs_t rvfi_ext_stage_mip              [RVFI_STAGES+1];
+  ibex_xif_pkg::irqs_t rvfi_ext_stage_mip              [RVFI_STAGES+1];
   logic            rvfi_ext_stage_nmi              [RVFI_STAGES+1];
   logic            rvfi_ext_stage_nmi_int          [RVFI_STAGES+1];
   logic            rvfi_ext_stage_debug_req        [RVFI_STAGES+1];

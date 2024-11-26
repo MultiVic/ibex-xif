@@ -10,9 +10,9 @@
 `include "prim_assert.sv"
 
 /**
- * Top level module of the ibex RISC-V core
+ * Top level module of the ibex_xif RISC-V core
  */
-module ibex_top import ibex_pkg::*; #(
+module ibex_xif_top import ibex_xif_pkg::*; #(
   parameter bit          PMPEnable        = 1'b0,
   parameter int unsigned PMPGranularity   = 0,
   parameter int unsigned PMPNumRegions    = 4,
@@ -149,7 +149,7 @@ module ibex_top import ibex_pkg::*; #(
 `endif
 
   // CPU Control Signals
-  input  ibex_mubi_t                   fetch_enable_i,
+  input  ibex_xif_mubi_t                   fetch_enable_i,
   output logic                         alert_minor_o,
   output logic                         alert_major_internal_o,
   output logic                         alert_major_bus_o,
@@ -178,7 +178,7 @@ module ibex_top import ibex_pkg::*; #(
 
   // Clock signals
   logic                        clk;
-  ibex_mubi_t                  core_busy_d, core_busy_q;
+  ibex_xif_mubi_t                  core_busy_d, core_busy_q;
   logic                        clock_en;
   logic                        irq_pending;
   // Core <-> Register file signals
@@ -219,7 +219,7 @@ module ibex_top import ibex_pkg::*; #(
   logic                        scramble_key_valid_d, scramble_key_valid_q;
   logic                        scramble_req_d, scramble_req_q;
 
-  ibex_mubi_t                  fetch_enable_buf;
+  ibex_xif_mubi_t                  fetch_enable_buf;
 
   /////////////////////
   // Main clock gate //
@@ -228,7 +228,7 @@ module ibex_top import ibex_pkg::*; #(
   if (SecureIbex) begin : g_clock_en_secure
     // For secure Ibex core_busy_q must be a specific multi-bit pattern to enable the clock.
     prim_flop #(
-      .Width($bits(ibex_mubi_t)),
+      .Width($bits(ibex_xif_mubi_t)),
       .ResetValue(IbexMuBiOff)
     ) u_prim_core_busy_flop (
       .clk_i (clk_i),
@@ -250,7 +250,7 @@ module ibex_top import ibex_pkg::*; #(
     assign clock_en = core_busy_q[0] | debug_req_i | irq_pending | irq_nm_i;
 
     logic unused_core_busy;
-    assign unused_core_busy = ^core_busy_q[$bits(ibex_mubi_t)-1:1];
+    assign unused_core_busy = ^core_busy_q[$bits(ibex_xif_mubi_t)-1:1];
   end
 
   assign core_sleep_o = ~clock_en;
@@ -267,7 +267,7 @@ module ibex_top import ibex_pkg::*; #(
   ////////////////////////
 
   // Buffer security critical signals to prevent synthesis optimisation removing them
-  prim_buf #(.Width($bits(ibex_mubi_t))) u_fetch_enable_buf (
+  prim_buf #(.Width($bits(ibex_xif_mubi_t))) u_fetch_enable_buf (
     .in_i (fetch_enable_i),
     .out_o(fetch_enable_buf)
   );
@@ -283,7 +283,7 @@ module ibex_top import ibex_pkg::*; #(
   );
 
 
-  // ibex_core takes integrity and data bits together. Combine the separate integrity and data
+  // ibex_xif_core takes integrity and data bits together. Combine the separate integrity and data
   // inputs here.
   assign data_rdata_core[31:0] = data_rdata_i;
   assign instr_rdata_core[31:0] = instr_rdata_i;
@@ -297,7 +297,7 @@ module ibex_top import ibex_pkg::*; #(
     assign unused_intg = ^{instr_rdata_intg_i, data_rdata_intg_i};
   end
 
-  ibex_core #(
+  ibex_xif_core #(
     .PMPEnable        (PMPEnable),
     .PMPGranularity   (PMPGranularity),
     .PMPNumRegions    (PMPNumRegions),
@@ -329,7 +329,7 @@ module ibex_top import ibex_pkg::*; #(
     .DmHaltAddr       (DmHaltAddr),
     .DmExceptionAddr  (DmExceptionAddr),
     .CoprocOpcodes    (CoprocOpcodes)
-  ) u_ibex_core (
+  ) u_ibex_xif_core (
     .clk_i(clk),
     .rst_ni,
 
@@ -452,7 +452,7 @@ module ibex_top import ibex_pkg::*; #(
 
   logic rf_alert_major_internal;
   if (RegFile == RegFileFF) begin : gen_regfile_ff
-    ibex_register_file_ff #(
+    ibex_xif_register_file_ff #(
       .RV32E            (RV32E),
       .DataWidth        (RegFileDataWidth),
       .DummyInstructions(DummyInstructions),
@@ -478,7 +478,7 @@ module ibex_top import ibex_pkg::*; #(
       .err_o    (rf_alert_major_internal)
     );
   end else if (RegFile == RegFileFPGA) begin : gen_regfile_fpga
-    ibex_register_file_fpga #(
+    ibex_xif_register_file_fpga #(
       .RV32E            (RV32E),
       .DataWidth        (RegFileDataWidth),
       .DummyInstructions(DummyInstructions),
@@ -504,7 +504,7 @@ module ibex_top import ibex_pkg::*; #(
       .err_o    (rf_alert_major_internal)
     );
   end else if (RegFile == RegFileLatch) begin : gen_regfile_latch
-    ibex_register_file_latch #(
+    ibex_xif_register_file_latch #(
       .RV32E            (RV32E),
       .DataWidth        (RegFileDataWidth),
       .DummyInstructions(DummyInstructions),
@@ -875,9 +875,9 @@ module ibex_top import ibex_pkg::*; #(
     logic                         debug_req_local;
     crash_dump_t                  crash_dump_local;
     logic                         double_fault_seen_local;
-    ibex_mubi_t                   fetch_enable_local;
+    ibex_xif_mubi_t                   fetch_enable_local;
 
-    ibex_mubi_t                   core_busy_local;
+    ibex_xif_mubi_t                   core_busy_local;
 
     assign buf_in = {
       hart_id_i,
@@ -1001,7 +1001,7 @@ module ibex_top import ibex_pkg::*; #(
     logic lockstep_alert_minor_local, lockstep_alert_major_internal_local;
     logic lockstep_alert_major_bus_local;
 
-    ibex_lockstep #(
+    ibex_xif_lockstep #(
       .PMPEnable        (PMPEnable),
       .PMPGranularity   (PMPGranularity),
       .PMPNumRegions    (PMPNumRegions),
@@ -1030,7 +1030,7 @@ module ibex_top import ibex_pkg::*; #(
       .MemECC           (MemECC),
       .DmHaltAddr       (DmHaltAddr),
       .DmExceptionAddr  (DmExceptionAddr)
-    ) u_ibex_lockstep (
+    ) u_ibex_xif_lockstep (
       .clk_i                  (clk),
       .rst_ni                 (rst_ni),
 
@@ -1224,12 +1224,12 @@ module ibex_top import ibex_pkg::*; #(
     // Should only see a request response if we're expecting one
     `ASSERT(PendingAccessTrackingCorrect, data_rvalid_i |-> pending_dside_accesses_q[0])
 
-    if (SecureIbex) begin : g_secure_ibex_mem_assert
+    if (SecureIbex) begin : g_secure_ibex_xif_mem_assert
       // For SecureIbex responses to both writes and reads must specify rdata and rdata_intg (for
       // writes rdata is effectively ignored by rdata_intg still checked against rdata)
       `ASSERT_KNOWN_IF(IbexDataRPayloadX, {data_rdata_i, data_rdata_intg_i},
           data_rvalid_i)
-    end else begin : g_no_secure_ibex_mem_assert
+    end else begin : g_no_secure_ibex_xif_mem_assert
       // Without SecureIbex data_rdata_i and data_rdata_intg_i are only relevant to reads. Check
       // neither are X on a response to a read.
       `ASSERT_KNOWN_IF(IbexDataRPayloadX, {data_rdata_i, data_rdata_intg_i},
@@ -1333,14 +1333,14 @@ module ibex_top import ibex_pkg::*; #(
   `ASSERT(WaddrAZeroForDummyInstr, dummy_instr_wb && rf_we_wb |-> rf_waddr_wb == '0)
 
   // Ensure the crash dump is connected to the correct internal signals
-  `ASSERT(CrashDumpCurrentPCConn, crash_dump_o.current_pc === u_ibex_core.pc_id)
-  `ASSERT(CrashDumpNextPCConn, crash_dump_o.next_pc === u_ibex_core.pc_if)
+  `ASSERT(CrashDumpCurrentPCConn, crash_dump_o.current_pc === u_ibex_xif_core.pc_id)
+  `ASSERT(CrashDumpNextPCConn, crash_dump_o.next_pc === u_ibex_xif_core.pc_if)
   `ASSERT(CrashDumpLastDataAddrConn,
-    crash_dump_o.last_data_addr === u_ibex_core.load_store_unit_i.addr_last_q)
+    crash_dump_o.last_data_addr === u_ibex_xif_core.load_store_unit_i.addr_last_q)
   `ASSERT(CrashDumpExceptionPCConn,
-    crash_dump_o.exception_pc === u_ibex_core.cs_registers_i.mepc_q)
+    crash_dump_o.exception_pc === u_ibex_xif_core.cs_registers_i.mepc_q)
   `ASSERT(CrashDumpExceptionAddrConn,
-    crash_dump_o.exception_addr === u_ibex_core.cs_registers_i.mtval_q)
+    crash_dump_o.exception_addr === u_ibex_xif_core.cs_registers_i.mtval_q)
 
   // Explicit INC_ASSERT due to instantiation of prim_secded_inv_39_32_dec below that is only used
   // by assertions

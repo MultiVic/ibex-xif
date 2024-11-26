@@ -5,12 +5,12 @@
 // An interface that contains SV assertions to check that the icache <-> core interface is being
 // driven correctly.
 //
-// This should be instantiated inside ibex_icache_core_if. The input names are the same as the
+// This should be instantiated inside ibex_xif_icache_core_if. The input names are the same as the
 // signals in the interface (no _i suffix), so that this can be instantiated with .*
 
 `include "prim_assert.sv"
 
-interface ibex_icache_core_protocol_checker (
+interface ibex_xif_icache_core_protocol_checker (
    input        clk,
    input        rst_n,
 

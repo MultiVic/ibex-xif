@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
-class core_ibex_report_server extends uvm_default_report_server;
+class core_ibex_xif_report_server extends uvm_default_report_server;
 
   function new(string name = "");
     super.new(name);

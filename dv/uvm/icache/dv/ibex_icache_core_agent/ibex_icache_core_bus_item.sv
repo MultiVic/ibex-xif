@@ -2,10 +2,10 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
-class ibex_icache_core_bus_item extends uvm_sequence_item;
+class ibex_xif_icache_core_bus_item extends uvm_sequence_item;
 
   // Type of bus transaction (branch, invalidate, fetch or busy)
-  ibex_icache_core_bus_trans_type_e trans_type;
+  ibex_xif_icache_core_bus_trans_type_e trans_type;
 
   // Address. For a branch transaction, this is the address of the destination. For a fetch
   // transaction, this is the address of the instruction fetched.
@@ -25,8 +25,8 @@ class ibex_icache_core_bus_item extends uvm_sequence_item;
   // signal.
   logic                             busy;
 
-  `uvm_object_utils_begin(ibex_icache_core_bus_item)
-    `uvm_field_enum(ibex_icache_core_bus_trans_type_e, trans_type, UVM_DEFAULT)
+  `uvm_object_utils_begin(ibex_xif_icache_core_bus_item)
+    `uvm_field_enum(ibex_xif_icache_core_bus_trans_type_e, trans_type, UVM_DEFAULT)
     `uvm_field_int(address,   UVM_DEFAULT | UVM_HEX)
     `uvm_field_int(insn_data, UVM_DEFAULT | UVM_HEX)
     `uvm_field_int(err,       UVM_DEFAULT)

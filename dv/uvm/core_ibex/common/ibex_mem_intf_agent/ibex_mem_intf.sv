@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
-interface ibex_mem_intf#(
+interface ibex_xif_mem_intf#(
   parameter int ADDR_WIDTH = 32,
   parameter int DATA_WIDTH = 32,
   parameter int INTG_WIDTH = 7
@@ -80,4 +80,4 @@ interface ibex_mem_intf#(
     repeat (num) @(negedge clk);
   endtask
 
-endinterface : ibex_mem_intf
+endinterface : ibex_xif_mem_intf

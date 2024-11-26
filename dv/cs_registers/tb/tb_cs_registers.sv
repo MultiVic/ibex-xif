@@ -11,8 +11,8 @@ module tb_cs_registers #(
     parameter int unsigned      PMPGranularity   = 0,
     parameter int unsigned      PMPNumRegions    = 4,
     parameter bit               RV32E            = 1'b0,
-    parameter ibex_pkg::rv32m_e RV32M            = ibex_pkg::RV32MFast,
-    parameter ibex_pkg::rv32b_e RV32B            = ibex_pkg::RV32BNone
+    parameter ibex_xif_pkg::rv32m_e RV32M            = ibex_xif_pkg::RV32MFast,
+    parameter ibex_xif_pkg::rv32b_e RV32B            = ibex_xif_pkg::RV32BNone
 ) (
     // Clock and Reset
     inout  logic                clk_i,
@@ -25,18 +25,18 @@ module tb_cs_registers #(
 
   // Interface to registers (SRAM like)
   logic                 csr_access_i;
-  ibex_pkg::csr_num_e   csr_addr_i;
+  ibex_xif_pkg::csr_num_e   csr_addr_i;
   logic [31:0]          csr_wdata_i;
-  ibex_pkg::csr_op_e    csr_op_i;
+  ibex_xif_pkg::csr_op_e    csr_op_i;
   logic                 csr_op_en_i;
   logic [31:0]          csr_rdata_o;
 
   logic                 illegal_csr_insn_o;
 
   logic                 csr_access_d;
-  ibex_pkg::csr_num_e   csr_addr_d;
+  ibex_xif_pkg::csr_num_e   csr_addr_d;
   logic [31:0]          csr_wdata_d;
-  ibex_pkg::csr_op_e    csr_op_d;
+  ibex_xif_pkg::csr_op_e    csr_op_d;
   logic                 csr_op_en_d;
   //-----------------
   // Reset generation
@@ -62,7 +62,7 @@ module tb_cs_registers #(
 `endif
 
   /* verilator lint_off PINMISSING */
-  ibex_cs_registers #(
+  ibex_xif_cs_registers #(
     .DbgTriggerEn     (DbgTriggerEn),
     .ICache           (ICache),
     .MHPMCounterNum   (MHPMCounterNum),

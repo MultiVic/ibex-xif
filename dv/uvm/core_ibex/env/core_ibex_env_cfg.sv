@@ -2,10 +2,10 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
-class core_ibex_env_cfg extends uvm_object;
+class core_ibex_xif_env_cfg extends uvm_object;
 
-  virtual clk_rst_if              ibex_clk_vif;
-  virtual core_ibex_dut_probe_if  ibex_dut_vif;
+  virtual clk_rst_if              ibex_xif_clk_vif;
+  virtual core_ibex_xif_dut_probe_if  ibex_xif_dut_vif;
 
   bit                           enable_mem_intg_err;
   bit                           enable_irq_single_seq;
@@ -32,7 +32,7 @@ class core_ibex_env_cfg extends uvm_object;
   // If '0', we end the test with a pass.
   bit                          is_timeout_s_fatal = 1;
 
-  `uvm_object_utils_begin(core_ibex_env_cfg)
+  `uvm_object_utils_begin(core_ibex_xif_env_cfg)
     `uvm_field_int(enable_double_fault_detector, UVM_DEFAULT)
     `uvm_field_int(is_double_fault_detected_fatal, UVM_DEFAULT)
     `uvm_field_int(enable_mem_intg_err,   UVM_DEFAULT)

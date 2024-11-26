@@ -12,12 +12,12 @@
  * All traced instructions are written to a log file. By default, the log file is named
  * trace_core_<HARTID>.log, with <HARTID> being the 8 digit hart ID of the core being traced.
  *
- * The file name base, defaulting to "trace_core" can be set using the "ibex_tracer_file_base"
- * plusarg passed to the simulation, e.g. "+ibex_tracer_file_base=ibex_my_trace". The exact syntax
+ * The file name base, defaulting to "trace_core" can be set using the "ibex_xif_tracer_file_base"
+ * plusarg passed to the simulation, e.g. "+ibex_xif_tracer_file_base=ibex_xif_my_trace". The exact syntax
  * of passing plusargs to a simulation depends on the simulator.
  *
  * The creation of the instruction trace is enabled by default but can be disabled for a simulation.
- * This behaviour is controlled by the plusarg "ibex_tracer_enable". Use "ibex_tracer_enable=0" to
+ * This behaviour is controlled by the plusarg "ibex_xif_tracer_enable". Use "ibex_xif_tracer_enable=0" to
  * disable the tracer.
  *
  * The trace contains six columns, separated by tabs:
@@ -34,7 +34,7 @@
  * to the one produced by objdump. This simplifies the correlation between the static program
  * information from the objdump-generated disassembly, and the runtime information from this tracer.
  */
-module ibex_tracer (
+module ibex_xif_tracer (
   input logic        clk_i,
   input logic        rst_ni,
 
@@ -79,7 +79,7 @@ module ibex_tracer (
   logic [ 1:0] unused_rvfi_mode = rvfi_mode;
   logic [ 1:0] unused_rvfi_ixl = rvfi_ixl;
 
-  import ibex_tracer_pkg::*;
+  import ibex_xif_tracer_pkg::*;
 
   int          file_handle;
   string       file_name;
@@ -98,7 +98,7 @@ module ibex_tracer (
 
   logic trace_log_enable;
   initial begin
-    if ($value$plusargs("ibex_tracer_enable=%b", trace_log_enable)) begin
+    if ($value$plusargs("ibex_xif_tracer_enable=%b", trace_log_enable)) begin
       if (trace_log_enable == 1'b0) begin
         $display("%m: Instruction trace disabled.");
       end
@@ -635,7 +635,7 @@ module ibex_tracer (
 
     /*
     Gives wrong results in Verilator < 4.020.
-    See https://github.com/lowRISC/ibex/issues/372 and
+    See https://github.com/lowRISC/ibex_xif/issues/372 and
     https://www.veripool.org/issues/1536-Verilator-Misoptimization-in-if-and-case-with-default-statement-inside-a-function
 
     unique case (rvfi_insn[14:12])
@@ -753,7 +753,7 @@ module ibex_tracer (
 
       if (fh == 32'h0) begin
         string file_name_base = "trace_core";
-        void'($value$plusargs("ibex_tracer_file_base=%s", file_name_base));
+        void'($value$plusargs("ibex_xif_tracer_file_base=%s", file_name_base));
         $sformat(file_name, "%s_%h.log", file_name_base, hart_id_i);
 
         $display("%m: Writing execution trace to %s", file_name);
@@ -868,7 +868,7 @@ module ibex_tracer (
         //   zext.b rd rs = andi rd, rs, 255.
         // However, for now the tracer doesn't emit this due to a lack of support in the LLVM and
         // GCC toolchains. Enabling this functionality when the time is right is tracked in
-        // https://github.com/lowRISC/ibex/issues/1228
+        // https://github.com/lowRISC/ibex_xif/issues/1228
         INSN_ANDI:       decode_i_insn("andi");
         // INSN_ANDI:begin
           // casez (rvfi_insn)
@@ -937,7 +937,7 @@ module ibex_tracer (
         //   zext.h rd rs = pack rd, rs, zero.
         // However, for now the tracer doesn't emit this due to a lack of support in the LLVM and
         // GCC toolchains. Enabling this functionality when the time is right is tracked in
-        // https://github.com/lowRISC/ibex/issues/1228
+        // https://github.com/lowRISC/ibex_xif/issues/1228
         INSN_PACK:       decode_r_insn("pack");
         // INSN_PACK: begin
           // casez (rvfi_insn)

@@ -6,7 +6,7 @@
 //
 // TODO: does not support dummy instruction insertion right now,
 //       might have to revisit and update.
-interface core_ibex_instr_monitor_if #(
+interface core_ibex_xif_instr_monitor_if #(
   parameter DATA_WIDTH = 32
 ) (
   input clk

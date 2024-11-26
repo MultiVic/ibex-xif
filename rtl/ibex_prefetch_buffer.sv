@@ -9,7 +9,7 @@
  * Prefetch Buffer that caches instructions. This cuts overly long critical
  * paths to the instruction cache.
  */
-module ibex_prefetch_buffer #(
+module ibex_xif_prefetch_buffer #(
   parameter bit ResetAll        = 1'b0
 ) (
   input  logic        clk_i,
@@ -85,7 +85,7 @@ module ibex_prefetch_buffer #(
   // Overlay the fifo fill state with the outstanding requests to see if there is space.
   assign fifo_ready = ~&(fifo_busy | rdata_outstanding_rev);
 
-  ibex_fetch_fifo #(
+  ibex_xif_fetch_fifo #(
     .NUM_REQS (NUM_REQS),
     .ResetAll (ResetAll)
   ) fifo_i (

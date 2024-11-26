@@ -4,13 +4,13 @@
 
 // Slave response sequence
 
-class ibex_icache_mem_resp_seq extends ibex_icache_mem_base_seq;
+class ibex_xif_icache_mem_resp_seq extends ibex_xif_icache_mem_base_seq;
 
   // Non-null if this is an item after the first in a "combo" run, which runs several of these
   // sequences back-to-back. Must be set before pre_start to have any effect.
-  ibex_icache_mem_resp_seq prev_sequence = null;
+  ibex_xif_icache_mem_resp_seq prev_sequence = null;
 
-  protected ibex_icache_mem_model #(.BusWidth (32)) mem_model;
+  protected ibex_xif_icache_mem_model #(.BusWidth (32)) mem_model;
 
   // We pick new seeds when we spot a request (rather than when we spot a grant) to ensure that
   // any given fetch corresponds to exactly one seed. Unfortunately, there's a race if these two
@@ -29,7 +29,7 @@ class ibex_icache_mem_resp_seq extends ibex_icache_mem_base_seq;
   bit [63:0] pending_grants[$];
   bit [31:0] cur_seed = 0;
 
-  `uvm_object_utils(ibex_icache_mem_resp_seq)
+  `uvm_object_utils(ibex_xif_icache_mem_resp_seq)
   `uvm_object_new
 
   task pre_start();
@@ -44,9 +44,9 @@ class ibex_icache_mem_resp_seq extends ibex_icache_mem_base_seq;
   endtask
 
   task body();
-    ibex_icache_mem_req_item  req_item  = new("req_item");
-    ibex_icache_mem_req_item  req_item2 = new("req_item2");
-    ibex_icache_mem_resp_item resp_item = new("resp_item");
+    ibex_xif_icache_mem_req_item  req_item  = new("req_item");
+    ibex_xif_icache_mem_req_item  req_item2 = new("req_item2");
+    ibex_xif_icache_mem_resp_item resp_item = new("resp_item");
 
     forever begin
       // Wait for a transaction request. We use peek, handle the request, and then get (and drop)
@@ -69,8 +69,8 @@ class ibex_icache_mem_resp_seq extends ibex_icache_mem_base_seq;
   // Start and randomize the response then take any new seed that comes out. Finally, fill in the
   // err signal based on the current seed.
   //
-  task automatic take_req(ibex_icache_mem_resp_item resp_item,
-                          ibex_icache_mem_req_item  req_item);
+  task automatic take_req(ibex_xif_icache_mem_resp_item resp_item,
+                          ibex_xif_icache_mem_req_item  req_item);
 
 
     // Warn the "grant side" to expect this fetch
@@ -89,8 +89,8 @@ class ibex_icache_mem_resp_seq extends ibex_icache_mem_base_seq;
 
   // Deal with a "grant" event (the memory system has granted a memory request from the cache and
   // added the request to its internal pipeline)
-  task automatic take_gnt(ibex_icache_mem_resp_item resp_item,
-                          ibex_icache_mem_req_item  req_item);
+  task automatic take_gnt(ibex_xif_icache_mem_resp_item resp_item,
+                          ibex_xif_icache_mem_req_item  req_item);
 
     bit [31:0] tmp_seed;
 

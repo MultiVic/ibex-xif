@@ -4,7 +4,7 @@
 
 `include "dv_fcov_macros.svh"
 
-module ibex_pmp #(
+module ibex_xif_pmp #(
   // Granularity of NAPOT access,
   // 0 = No restriction, 1 = 8 byte, 2 = 16 byte, 3 = 32 byte, etc.
   parameter int unsigned PMPGranularity = 0,
@@ -14,19 +14,19 @@ module ibex_pmp #(
   parameter int unsigned PMPNumRegions  = 4
 ) (
   // Interface to CSRs
-  input  ibex_pkg::pmp_cfg_t      csr_pmp_cfg_i     [PMPNumRegions],
+  input  ibex_xif_pkg::pmp_cfg_t      csr_pmp_cfg_i     [PMPNumRegions],
   input  logic [33:0]             csr_pmp_addr_i    [PMPNumRegions],
-  input  ibex_pkg::pmp_mseccfg_t  csr_pmp_mseccfg_i,
+  input  ibex_xif_pkg::pmp_mseccfg_t  csr_pmp_mseccfg_i,
 
-  input  ibex_pkg::priv_lvl_e     priv_mode_i    [PMPNumChan],
+  input  ibex_xif_pkg::priv_lvl_e     priv_mode_i    [PMPNumChan],
   // Access checking channels
   input  logic [33:0]             pmp_req_addr_i [PMPNumChan],
-  input  ibex_pkg::pmp_req_e      pmp_req_type_i [PMPNumChan],
+  input  ibex_xif_pkg::pmp_req_e      pmp_req_type_i [PMPNumChan],
   output logic                    pmp_req_err_o  [PMPNumChan]
 
 );
 
-  import ibex_pkg::*;
+  import ibex_xif_pkg::*;
 
   // Access Checking Signals
   logic [33:0]                                region_start_addr [PMPNumRegions];
@@ -51,9 +51,9 @@ module ibex_pmp #(
   //                                                            \--> pmp_req_err_o
 
   // Compute permissions checks that apply when MSECCFG.MML is set. Added for Smepmp support.
-  function automatic logic mml_perm_check(ibex_pkg::pmp_cfg_t  region_csr_pmp_cfg,
-                                          ibex_pkg::pmp_req_e  pmp_req_type,
-                                          ibex_pkg::priv_lvl_e priv_mode,
+  function automatic logic mml_perm_check(ibex_xif_pkg::pmp_cfg_t  region_csr_pmp_cfg,
+                                          ibex_xif_pkg::pmp_req_e  pmp_req_type,
+                                          ibex_xif_pkg::priv_lvl_e priv_mode,
                                           logic                permission_check);
     logic result = 1'b0;
     logic unused_cfg = |region_csr_pmp_cfg.mode;
@@ -94,7 +94,7 @@ module ibex_pmp #(
   // Compute permissions checks that apply when MSECCFG.MML is unset. This is the original PMP
   // behaviour before Smepmp was added.
   function automatic logic orig_perm_check(logic                pmp_cfg_lock,
-                                           ibex_pkg::priv_lvl_e priv_mode,
+                                           ibex_xif_pkg::priv_lvl_e priv_mode,
                                            logic                permission_check);
       return (priv_mode == PRIV_LVL_M) ?
           // For M-mode, any region which matches with the L-bit clear, or with sufficient
@@ -106,9 +106,9 @@ module ibex_pmp #(
 
   // A wrapper function in which it is decided which form of permission check function gets called
   function automatic logic perm_check_wrapper(logic                csr_pmp_mseccfg_mml,
-                                              ibex_pkg::pmp_cfg_t  region_csr_pmp_cfg,
-                                              ibex_pkg::pmp_req_e  pmp_req_type,
-                                              ibex_pkg::priv_lvl_e priv_mode,
+                                              ibex_xif_pkg::pmp_cfg_t  region_csr_pmp_cfg,
+                                              ibex_xif_pkg::pmp_req_e  pmp_req_type,
+                                              ibex_xif_pkg::priv_lvl_e priv_mode,
                                               logic                permission_check);
     return csr_pmp_mseccfg_mml ? mml_perm_check(region_csr_pmp_cfg,
                                                 pmp_req_type,
@@ -122,9 +122,9 @@ module ibex_pmp #(
   // Access fault determination / prioritization
   function automatic logic access_fault_check (logic                     csr_pmp_mseccfg_mmwp,
                                                logic                     csr_pmp_mseccfg_mml,
-                                               ibex_pkg::pmp_req_e       pmp_req_type,
+                                               ibex_xif_pkg::pmp_req_e       pmp_req_type,
                                                logic [PMPNumRegions-1:0] match_all,
-                                               ibex_pkg::priv_lvl_e      priv_mode,
+                                               ibex_xif_pkg::priv_lvl_e      priv_mode,
                                                logic [PMPNumRegions-1:0] final_perm_check);
 
 
@@ -241,7 +241,7 @@ module ibex_pmp #(
       ~pmp_req_err_o[c] & |(region_match_all[c] & ~region_perm_check[c]))
   end
 
-  // RLB, rule locking bypass, is only relevant to ibex_cs_registers which controls writes to the
+  // RLB, rule locking bypass, is only relevant to ibex_xif_cs_registers which controls writes to the
   // PMP CSRs. Tie to unused signal here to prevent lint warnings.
   logic unused_csr_pmp_mseccfg_rlb;
   assign unused_csr_pmp_mseccfg_rlb = csr_pmp_mseccfg_i.rlb;

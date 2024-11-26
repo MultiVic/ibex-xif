@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
-module ibex_simple_system_cosim_checker #(
+module ibex_xif_simple_system_cosim_checker #(
   parameter bit                 SecureIbex     = 1'b0,
   parameter bit                 ICache         = 1'b0,
   parameter bit                 PMPEnable      = 1'b0,
@@ -25,10 +25,10 @@ module ibex_simple_system_cosim_checker #(
   input logic        host_dmem_err
 );
   import "DPI-C" function chandle get_spike_cosim;
-  import "DPI-C" function void create_cosim(bit secure_ibex, bit icache_en,
+  import "DPI-C" function void create_cosim(bit secure_ibex_xif, bit icache_en,
     bit [31:0] pmp_num_regions, bit [31:0] pmp_granularity, bit [31:0] mhpm_counter_num);
 
-  import ibex_pkg::*;
+  import ibex_xif_pkg::*;
 
   chandle cosim_handle;
 
@@ -87,12 +87,12 @@ module ibex_simple_system_cosim_checker #(
         outstanding_be         <= host_dmem_be;
         outstanding_store_data <= host_dmem_wdata;
         outstanding_misaligned_first <=
-          u_top.u_ibex_top.u_ibex_core.load_store_unit_i.handle_misaligned_d |
-          ((u_top.u_ibex_top.u_ibex_core.load_store_unit_i.lsu_type_i == 2'b01) &
-           (u_top.u_ibex_top.u_ibex_core.load_store_unit_i.data_offset == 2'b01));
+          u_top.u_ibex_xif_top.u_ibex_xif_core.load_store_unit_i.handle_misaligned_d |
+          ((u_top.u_ibex_xif_top.u_ibex_xif_core.load_store_unit_i.lsu_type_i == 2'b01) &
+           (u_top.u_ibex_xif_top.u_ibex_xif_core.load_store_unit_i.data_offset == 2'b01));
 
         outstanding_misaligned_second <=
-          u_top.u_ibex_top.u_ibex_core.load_store_unit_i.addr_incr_req_o;
+          u_top.u_ibex_xif_top.u_ibex_xif_core.load_store_unit_i.addr_incr_req_o;
       end
 
       if (host_dmem_rvalid) begin

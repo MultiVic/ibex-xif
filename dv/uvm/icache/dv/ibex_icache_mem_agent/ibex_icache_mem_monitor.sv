@@ -2,23 +2,23 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
-class ibex_icache_mem_monitor
-  extends dv_base_monitor #(.ITEM_T     (ibex_icache_mem_bus_item),
-                            .REQ_ITEM_T (ibex_icache_mem_resp_item),
-                            .RSP_ITEM_T (ibex_icache_mem_resp_item),
-                            .CFG_T      (ibex_icache_mem_agent_cfg),
-                            .COV_T      (ibex_icache_mem_agent_cov));
+class ibex_xif_icache_mem_monitor
+  extends dv_base_monitor #(.ITEM_T     (ibex_xif_icache_mem_bus_item),
+                            .REQ_ITEM_T (ibex_xif_icache_mem_resp_item),
+                            .RSP_ITEM_T (ibex_xif_icache_mem_resp_item),
+                            .CFG_T      (ibex_xif_icache_mem_agent_cfg),
+                            .COV_T      (ibex_xif_icache_mem_agent_cov));
 
-  `uvm_component_utils(ibex_icache_mem_monitor)
+  `uvm_component_utils(ibex_xif_icache_mem_monitor)
   `uvm_component_new
 
   // the base class provides the following handles for use:
-  // ibex_icache_mem_agent_cfg: cfg
-  // ibex_icache_mem_agent_cov: cov
-  // uvm_analysis_port #(ibex_icache_mem_bus_item): analysis_port
+  // ibex_xif_icache_mem_agent_cfg: cfg
+  // ibex_xif_icache_mem_agent_cov: cov
+  // uvm_analysis_port #(ibex_xif_icache_mem_bus_item): analysis_port
 
   // Incoming requests. This gets hooked up to the sequencer to service requests
-  uvm_analysis_port #(ibex_icache_mem_req_item) request_port;
+  uvm_analysis_port #(ibex_xif_icache_mem_req_item) request_port;
 
   function automatic void build_phase(uvm_phase phase);
     super.build_phase(phase);
@@ -52,11 +52,11 @@ class ibex_icache_mem_monitor
   endtask
 
   task automatic collect_responses();
-    ibex_icache_mem_bus_item bus_trans;
+    ibex_xif_icache_mem_bus_item bus_trans;
 
     forever begin
       if (cfg.vif.monitor_cb.rvalid) begin
-        bus_trans = ibex_icache_mem_bus_item::type_id::create("bus_trans");
+        bus_trans = ibex_xif_icache_mem_bus_item::type_id::create("bus_trans");
         bus_trans.is_grant = 1'b0;
         bus_trans.data     = cfg.vif.monitor_cb.rdata;
         bus_trans.err      = cfg.vif.monitor_cb.err;
@@ -69,14 +69,14 @@ class ibex_icache_mem_monitor
 
   // This is called on a clock edge when an request is granted
   function automatic void new_grant(logic [31:0] addr);
-    ibex_icache_mem_req_item item;
-    ibex_icache_mem_bus_item bus_trans;
+    ibex_xif_icache_mem_req_item item;
+    ibex_xif_icache_mem_bus_item bus_trans;
 
-    item = ibex_icache_mem_req_item::type_id::create("item");
+    item = ibex_xif_icache_mem_req_item::type_id::create("item");
     item.address  = addr;
     request_port.write(item);
 
-    bus_trans = ibex_icache_mem_bus_item::type_id::create("bus_trans");
+    bus_trans = ibex_xif_icache_mem_bus_item::type_id::create("bus_trans");
     bus_trans.is_grant = 1'b1;
     bus_trans.data     = addr;
     bus_trans.err      = 0;

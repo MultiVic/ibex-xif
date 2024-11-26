@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
-interface core_ibex_ifetch_pmp_if(input logic clk);
+interface core_ibex_xif_ifetch_pmp_if(input logic clk);
   logic reset;
 
   logic        fetch_valid;
@@ -19,4 +19,4 @@ interface core_ibex_ifetch_pmp_if(input logic clk);
   task automatic wait_clks(input int num);
     repeat (num) @(posedge clk);
   endtask
-endinterface : core_ibex_ifetch_pmp_if
+endinterface : core_ibex_xif_ifetch_pmp_if

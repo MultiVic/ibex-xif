@@ -6,7 +6,7 @@ class core_base_new_seq #(type REQ = uvm_sequence_item) extends uvm_sequence #(R
 
   // Virtual interfaces for driving stimulus directly
   virtual             clk_rst_if   clk_vif;
-  virtual core_ibex_dut_probe_if   dut_vif;
+  virtual core_ibex_xif_dut_probe_if   dut_vif;
 
   bit                              stop_seq;
   bit                              seq_finished;
@@ -46,7 +46,7 @@ class core_base_new_seq #(type REQ = uvm_sequence_item) extends uvm_sequence #(R
     if(!uvm_config_db#(virtual clk_rst_if)::get(null, "", "clk_if", clk_vif)) begin
        `uvm_fatal(`gfn, "Cannot get clk_if")
     end
-    if (!uvm_config_db#(virtual core_ibex_dut_probe_if)::get(null, "", "dut_if", dut_vif)) begin
+    if (!uvm_config_db#(virtual core_ibex_xif_dut_probe_if)::get(null, "", "dut_if", dut_vif)) begin
       `uvm_fatal(`gfn, "Cannot get dut_if")
     end
   endfunction
@@ -201,8 +201,8 @@ class debug_new_seq extends core_base_new_seq#(irq_seq_item);
 
 endclass
 
-class memory_error_seq extends core_base_new_seq#(ibex_mem_intf_seq_item);
-  core_ibex_vseq               vseq;
+class memory_error_seq extends core_base_new_seq#(ibex_xif_mem_intf_seq_item);
+  core_ibex_xif_vseq               vseq;
   rand bit                     choose_side;
   // When set skip error injection if Ibex is currently handling an exception (incluing IRQs)
   bit                          skip_on_exc = 1'b0;
@@ -217,7 +217,7 @@ class memory_error_seq extends core_base_new_seq#(ibex_mem_intf_seq_item);
   }
 
   `uvm_object_utils(memory_error_seq)
-  `uvm_declare_p_sequencer(core_ibex_vseqr)
+  `uvm_declare_p_sequencer(core_ibex_xif_vseqr)
 
   function new (string name = "");
     super.new(name);
@@ -285,21 +285,21 @@ class fetch_enable_seq extends core_base_new_seq#(irq_seq_item);
       all_off_values = 0;
     end
 
-    dut_vif.dut_cb.fetch_enable <= ibex_pkg::IbexMuBiOn;
+    dut_vif.dut_cb.fetch_enable <= ibex_xif_pkg::IbexMuBiOn;
     super.body();
   endtask: body
 
   virtual task send_req();
-    ibex_pkg::ibex_mubi_t fetch_enable_off;
+    ibex_xif_pkg::ibex_xif_mubi_t fetch_enable_off;
     int unsigned          off_delay;
 
     if (all_off_values) begin
       // Randomise the MUBI fetch_enable value to be one of the many possible off values
       `DV_CHECK_STD_RANDOMIZE_WITH_FATAL(fetch_enable_off,
-        fetch_enable_off != ibex_pkg::IbexMuBiOn;)
+        fetch_enable_off != ibex_xif_pkg::IbexMuBiOn;)
     end else begin
       // Otherwise use single fixed off value
-      fetch_enable_off = ibex_pkg::IbexMuBiOff;
+      fetch_enable_off = ibex_xif_pkg::IbexMuBiOff;
     end
 
     `DV_CHECK_STD_RANDOMIZE_WITH_FATAL(off_delay,
@@ -307,7 +307,7 @@ class fetch_enable_seq extends core_base_new_seq#(irq_seq_item);
 
     dut_vif.dut_cb.fetch_enable <= fetch_enable_off;
     clk_vif.wait_clks(off_delay);
-    dut_vif.dut_cb.fetch_enable <= ibex_pkg::IbexMuBiOn;
+    dut_vif.dut_cb.fetch_enable <= ibex_xif_pkg::IbexMuBiOn;
 
   endtask
 

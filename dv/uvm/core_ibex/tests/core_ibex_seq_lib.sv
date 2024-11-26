@@ -166,7 +166,7 @@ endclass
 // Simple debug sequence
 // debug_req is just a single bit sideband signal, use the interface to drive it directly
 class debug_seq extends core_base_seq#(irq_seq_item);
-  virtual core_ibex_dut_probe_if dut_vif;
+  virtual core_ibex_xif_dut_probe_if dut_vif;
 
   `uvm_object_utils(debug_seq)
   `uvm_object_new
@@ -174,7 +174,7 @@ class debug_seq extends core_base_seq#(irq_seq_item);
   int unsigned drop_delay = 75;
 
   virtual task body();
-    if (!uvm_config_db#(virtual core_ibex_dut_probe_if)::get(null, "", "dut_if", dut_vif)) begin
+    if (!uvm_config_db#(virtual core_ibex_xif_dut_probe_if)::get(null, "", "dut_if", dut_vif)) begin
       `uvm_fatal(get_full_name(), "Cannot get dut_if")
     end
     dut_vif.dut_cb.debug_req <= 1'b0;

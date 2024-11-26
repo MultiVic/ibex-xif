@@ -9,16 +9,16 @@
 //    (1) GNT:     This toggles randomly, completely ignoring any other signals.
 //    (2) RDATA:   This gets set with response data some time after granting a request.
 
-class ibex_icache_mem_driver
-  extends dv_base_driver #(.ITEM_T (ibex_icache_mem_resp_item),
-                           .CFG_T  (ibex_icache_mem_agent_cfg));
+class ibex_xif_icache_mem_driver
+  extends dv_base_driver #(.ITEM_T (ibex_xif_icache_mem_resp_item),
+                           .CFG_T  (ibex_xif_icache_mem_agent_cfg));
 
   int unsigned min_grant_delay = 0;
   int unsigned max_grant_delay = 10;
 
-  mailbox #(ibex_icache_mem_resp_item) rdata_queue;
+  mailbox #(ibex_xif_icache_mem_resp_item) rdata_queue;
 
-  `uvm_component_utils(ibex_icache_mem_driver)
+  `uvm_component_utils(ibex_xif_icache_mem_driver)
   `uvm_component_new
 
   function void build_phase(uvm_phase phase);
@@ -27,7 +27,7 @@ class ibex_icache_mem_driver
   endfunction
 
   virtual task reset_signals();
-    ibex_icache_mem_resp_item resp;
+    ibex_xif_icache_mem_resp_item resp;
     bit [32:0]                req;
 
     cfg.vif.reset();
@@ -90,7 +90,7 @@ class ibex_icache_mem_driver
   // Drive the rdata/valid/err response lines
   task automatic drive_responses();
     int unsigned delay;
-    ibex_icache_mem_resp_item item;
+    ibex_xif_icache_mem_resp_item item;
 
     forever begin
       rdata_queue.get(item);

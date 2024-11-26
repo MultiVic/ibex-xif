@@ -7,9 +7,9 @@
 // This is based on the caching vseq, which means we should see lots of cache hits (some of which
 // will be corrupt).
 
-class ibex_icache_ecc_vseq extends ibex_icache_caching_vseq;
+class ibex_xif_icache_ecc_vseq extends ibex_xif_icache_caching_vseq;
 
-  `uvm_object_utils(ibex_icache_ecc_vseq)
+  `uvm_object_utils(ibex_xif_icache_ecc_vseq)
   `uvm_object_new
 
   virtual task pre_start();
@@ -30,4 +30,4 @@ class ibex_icache_ecc_vseq extends ibex_icache_caching_vseq;
     p_sequencer.cfg.disable_caching_ratio_test = old_dcrt;
   endtask : body
 
-endclass : ibex_icache_ecc_vseq
+endclass : ibex_xif_icache_ecc_vseq

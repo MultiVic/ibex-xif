@@ -3,12 +3,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //-----------------------------------------------------------------------------------------
-// RISC-V assembly program generator for ibex
+// RISC-V assembly program generator for ibex_xif
 //-----------------------------------------------------------------------------------------
 
-class ibex_asm_program_gen extends riscv_asm_program_gen;
+class ibex_xif_asm_program_gen extends riscv_asm_program_gen;
 
-  `uvm_object_utils(ibex_asm_program_gen)
+  `uvm_object_utils(ibex_xif_asm_program_gen)
   `uvm_object_new
 
   virtual function void gen_program();
@@ -85,12 +85,12 @@ class ibex_asm_program_gen extends riscv_asm_program_gen;
     // 1 or 0 for the duration of the run)
     if (cfg.set_mstatus_mprv)
       cfg.mstatus_mprv = $urandom_range(1);
-    // Override the cfg value, below fields are not supported by ibex
+    // Override the cfg value, below fields are not supported by ibex_xif
     cfg.mstatus_mxr  = 0;
     cfg.mstatus_sum  = 0;
     cfg.mstatus_tvm  = 0;
     // Disable below fields checking against spike as spike implementation is different compared
-    // with ibex.
+    // with ibex_xif.
     cfg.check_misa_init_val = 1'b0;
     cfg.check_xstatus = 1'b0;
     instr_stream.push_back(".section .text");

@@ -3,10 +3,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-// CLASS: ibex_mem_intf_seq_item
+// CLASS: ibex_xif_mem_intf_seq_item
 //------------------------------------------------------------------------------
 
-class ibex_mem_intf_seq_item extends uvm_sequence_item;
+class ibex_xif_mem_intf_seq_item extends uvm_sequence_item;
 
   rand bit [ADDR_WIDTH-1:0]     addr;
   rand rw_e                     read_write;
@@ -20,7 +20,7 @@ class ibex_mem_intf_seq_item extends uvm_sequence_item;
        bit                      misaligned_first;
        bit                      misaligned_second;
 
-  `uvm_object_utils_begin(ibex_mem_intf_seq_item)
+  `uvm_object_utils_begin(ibex_xif_mem_intf_seq_item)
     `uvm_field_int      (addr,              UVM_DEFAULT)
     `uvm_field_enum     (rw_e, read_write,  UVM_DEFAULT)
     `uvm_field_int      (be,                UVM_DEFAULT)
@@ -35,4 +35,4 @@ class ibex_mem_intf_seq_item extends uvm_sequence_item;
 
   `uvm_object_new
 
-endclass : ibex_mem_intf_seq_item
+endclass : ibex_xif_mem_intf_seq_item

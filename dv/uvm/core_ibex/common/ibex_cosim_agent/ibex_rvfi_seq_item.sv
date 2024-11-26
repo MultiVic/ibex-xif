@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
-class ibex_rvfi_seq_item extends uvm_sequence_item;
+class ibex_xif_rvfi_seq_item extends uvm_sequence_item;
   bit        irq_only;
   bit        trap;
   bit [31:0] pc;
@@ -20,7 +20,7 @@ class ibex_rvfi_seq_item extends uvm_sequence_item;
   bit [31:0] mhpmcountersh [10];
   bit        ic_scr_key_valid;
 
-  `uvm_object_utils_begin(ibex_rvfi_seq_item)
+  `uvm_object_utils_begin(ibex_xif_rvfi_seq_item)
     `uvm_field_int (trap, UVM_DEFAULT)
     `uvm_field_int (pc, UVM_DEFAULT)
     `uvm_field_int (rd_addr, UVM_DEFAULT)
@@ -39,4 +39,4 @@ class ibex_rvfi_seq_item extends uvm_sequence_item;
 
   `uvm_object_new
 
-endclass : ibex_rvfi_seq_item
+endclass : ibex_xif_rvfi_seq_item

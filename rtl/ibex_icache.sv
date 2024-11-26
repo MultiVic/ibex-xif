@@ -10,7 +10,7 @@
 
 `include "prim_assert.sv"
 
-module ibex_icache import ibex_pkg::*; #(
+module ibex_xif_icache import ibex_xif_pkg::*; #(
   parameter bit          ICacheECC       = 1'b0,
   parameter bit          ResetAll        = 1'b0,
   parameter int unsigned BusSizeECC      = BUS_SIZE,
@@ -1070,7 +1070,7 @@ module ibex_icache import ibex_pkg::*; #(
   // reset and after any invalidation request (signalled via icache_inval_i). An invalidation
   // request coming whilst another is writing tags causes the invalidation to start again. This
   // ensures a new scramble key is requested where a previous one is in use.
-  // TODO: Ditch this behaviour for non-secure ibex?
+  // TODO: Ditch this behaviour for non-secure ibex_xif?
   always_comb begin
     inval_state_d     = inval_state_q;
     inval_index_d     = inval_index_q;

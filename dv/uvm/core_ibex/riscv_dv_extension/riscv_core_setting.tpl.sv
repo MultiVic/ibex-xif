@@ -45,7 +45,7 @@ privileged_mode_t supported_privileged_mode[] = {MACHINE_MODE, USER_MODE};
 
 // Unsupported instructions
 // Avoid generating these instructions in regular regression
-// FENCE.I is intentionally treated as illegal instruction by ibex core
+// FENCE.I is intentionally treated as illegal instruction by ibex_xif core
 riscv_instr_name_t unsupported_instr[] = {};
 
 // Specify whether processor supports unaligned loads and stores
@@ -54,7 +54,7 @@ bit support_unaligned_load_store = 1'b1;
 // ISA supported by the processor
 // TODO: Determine how Ibex RV32B types map to RISCV-DV ISA names
 riscv_instr_group_t supported_isa[$] = {RV32I, RV32M, RV32C
-% if ibex_config['RV32B'] == 'ibex_pkg::RV32BNone':
+% if ibex_xif_config['RV32B'] == 'ibex_xif_pkg::RV32BNone':
     };
 % else:
     ,RV32ZBA, RV32ZBB, RV32ZBC, RV32ZBS, RV32B};
@@ -67,7 +67,7 @@ mtvec_mode_t supported_interrupt_mode[$] = {VECTORED};
 // supported
 int max_interrupt_vector_num = 32;
 
-% if ibex_config['PMPEnable']:
+% if ibex_xif_config['PMPEnable']:
 // Physical memory protection support
 bit support_pmp = 1;
 
@@ -138,12 +138,12 @@ const privileged_reg_t implemented_csr[] = {
     //MINSTRET,         // Machine instructions retired counter (lower 32 bits)
     //MINSTRETH,        // Machine instructions retired counter (upper 32 bits)
     MCOUNTINHIBIT,    // Machine counter inhibit register
-% for pcount_num in range(ibex_config['MHPMCounterNum']):
+% for pcount_num in range(ibex_xif_config['MHPMCounterNum']):
     MHPMEVENT${pcount_num + 3},       // Machine performance monitoring event selector
     MHPMCOUNTER${pcount_num + 3},     // Machine performance monitoring counter (lower 32 bits)
     MHPMCOUNTER${pcount_num + 3}H,    // Machine performance monitoring counter (lower 32 bits)
 % endfor
-% if ibex_config['PMPEnable']:
+% if ibex_xif_config['PMPEnable']:
     MSECCFG,          // Machine security configuration register
     PMPCFG0,          // PMP configuration register
     PMPCFG1,          // PMP configuration register
@@ -170,7 +170,7 @@ const privileged_reg_t implemented_csr[] = {
     DPC,              // Debug PC
     DSCRATCH0,        // Debug scratch register 0
     DSCRATCH1         // Debug scratch register 1
-% if ibex_config['DbgTriggerEn']:
+% if ibex_xif_config['DbgTriggerEn']:
     ,TSELECT,         // Trigger select register
     TDATA1,           // Trigger data register 1
     TDATA2,           // Trigger data register 2
@@ -180,9 +180,9 @@ const privileged_reg_t implemented_csr[] = {
     //SCONTEXT          // Supervisor context register
 };
 
-// TODO: Co-simulation fix required so cpuctrl behaves correctly in co-sim for all ibex configs. For
+// TODO: Co-simulation fix required so cpuctrl behaves correctly in co-sim for all ibex_xif configs. For
 // now we only test it when all fields are available.
-% if ibex_config['SecureIbex'] and ibex_config['ICache']:
+% if ibex_xif_config['SecureIbex'] and ibex_xif_config['ICache']:
 // Implementation-specific custom CSRs
 const bit [11:0] custom_csr[] = {
   12'h7C0,    // cpuctrl    - CPU control register

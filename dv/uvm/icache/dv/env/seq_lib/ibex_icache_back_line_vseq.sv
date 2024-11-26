@@ -2,9 +2,9 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
-class ibex_icache_back_line_vseq extends ibex_icache_base_vseq;
+class ibex_xif_icache_back_line_vseq extends ibex_xif_icache_base_vseq;
 
-  `uvm_object_utils(ibex_icache_back_line_vseq)
+  `uvm_object_utils(ibex_xif_icache_back_line_vseq)
   `uvm_object_new
 
   virtual task pre_start();
@@ -17,8 +17,8 @@ class ibex_icache_back_line_vseq extends ibex_icache_base_vseq;
     // factory's set_inst_override_by_name. Once we've called the base class's pre_start method, we
     // tidy up the override again (to allow sequence chaining).
     f = uvm_factory::get();
-    base_name = ibex_icache_core_base_seq::type_name;
-    back_name = ibex_icache_core_back_line_seq::type_name;
+    base_name = ibex_xif_icache_core_base_seq::type_name;
+    back_name = ibex_xif_icache_core_back_line_seq::type_name;
     inst_path = {`gfn, ".*"};
 
     wrapper = f.find_override_by_name(base_name, inst_path);
@@ -31,4 +31,4 @@ class ibex_icache_back_line_vseq extends ibex_icache_base_vseq;
 
   endtask : pre_start
 
-endclass : ibex_icache_back_line_vseq
+endclass : ibex_xif_icache_back_line_vseq

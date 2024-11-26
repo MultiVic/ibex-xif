@@ -10,7 +10,7 @@
  * simulators (if the top-level clk and rst ports are replaced with a generated
  * clock).
  */
-module ibex_riscv_compliance (
+module ibex_xif_riscv_compliance (
   input IO_CLK,
   input IO_RST_N
 );
@@ -21,9 +21,9 @@ module ibex_riscv_compliance (
   parameter int unsigned MHPMCounterNum   = 0;
   parameter int unsigned MHPMCounterWidth = 40;
   parameter bit RV32E                     = 1'b0;
-  parameter ibex_pkg::rv32m_e RV32M       = ibex_pkg::RV32MFast;
-  parameter ibex_pkg::rv32b_e RV32B       = ibex_pkg::RV32BNone;
-  parameter ibex_pkg::regfile_e RegFile   = ibex_pkg::RegFileFF;
+  parameter ibex_xif_pkg::rv32m_e RV32M       = ibex_xif_pkg::RV32MFast;
+  parameter ibex_xif_pkg::rv32b_e RV32B       = ibex_xif_pkg::RV32BNone;
+  parameter ibex_xif_pkg::regfile_e RegFile   = ibex_xif_pkg::RegFileFF;
   parameter bit BranchTargetALU           = 1'b0;
   parameter bit WritebackStage            = 1'b0;
   parameter bit ICache                    = 1'b0;
@@ -66,8 +66,8 @@ module ibex_riscv_compliance (
   logic [31:0]    host_rdata  [NrHosts];
   logic           host_err    [NrHosts];
 
-  logic [6:0]     ibex_data_rdata_intg;
-  logic [6:0]     ibex_instr_rdata_intg;
+  logic [6:0]     ibex_xif_data_rdata_intg;
+  logic [6:0]     ibex_xif_instr_rdata_intg;
 
   // devices (slaves)
   logic           device_req    [NrDevices];
@@ -125,19 +125,19 @@ module ibex_riscv_compliance (
 
     prim_secded_inv_39_32_enc u_data_rdata_intg_gen (
       .data_i (host_rdata[CoreD]),
-      .data_o ({ibex_data_rdata_intg, unused_data_rdata})
+      .data_o ({ibex_xif_data_rdata_intg, unused_data_rdata})
     );
 
     prim_secded_inv_39_32_enc u_instr_rdata_intg_gen (
       .data_i (host_rdata[CoreI]),
-      .data_o ({ibex_instr_rdata_intg, unused_instr_rdata})
+      .data_o ({ibex_xif_instr_rdata_intg, unused_instr_rdata})
     );
   end else begin : g_no_mem_rdata_ecc
-    assign ibex_data_rdata_intg = '0;
-    assign ibex_instr_rdata_intg = '0;
+    assign ibex_xif_data_rdata_intg = '0;
+    assign ibex_xif_instr_rdata_intg = '0;
   end
 
-  ibex_top_tracing #(
+  ibex_xif_top_tracing #(
       .PMPEnable        (PMPEnable         ),
       .PMPGranularity   (PMPGranularity    ),
       .PMPNumRegions    (PMPNumRegions     ),
@@ -174,7 +174,7 @@ module ibex_riscv_compliance (
       .instr_rvalid_i         (host_rvalid[CoreI]   ),
       .instr_addr_o           (host_addr[CoreI]     ),
       .instr_rdata_i          (host_rdata[CoreI]    ),
-      .instr_rdata_intg_i     (ibex_instr_rdata_intg),
+      .instr_rdata_intg_i     (ibex_xif_instr_rdata_intg),
       .instr_err_i            (host_err[CoreI]      ),
 
       .data_req_o             (host_req[CoreD]      ),
@@ -186,7 +186,7 @@ module ibex_riscv_compliance (
       .data_wdata_o           (host_wdata[CoreD]    ),
       .data_wdata_intg_o      (                     ),
       .data_rdata_i           (host_rdata[CoreD]    ),
-      .data_rdata_intg_i      (ibex_data_rdata_intg ),
+      .data_rdata_intg_i      (ibex_xif_data_rdata_intg ),
       .data_err_i             (host_err[CoreD]      ),
 
       .irq_software_i         (1'b0                 ),
@@ -204,7 +204,7 @@ module ibex_riscv_compliance (
       .crash_dump_o           (                     ),
       .double_fault_seen_o    (                     ),
 
-      .fetch_enable_i         (ibex_pkg::IbexMuBiOn ),
+      .fetch_enable_i         (ibex_xif_pkg::IbexMuBiOn ),
       .alert_minor_o          (                     ),
       .alert_major_internal_o (                     ),
       .alert_major_bus_o      (                     ),

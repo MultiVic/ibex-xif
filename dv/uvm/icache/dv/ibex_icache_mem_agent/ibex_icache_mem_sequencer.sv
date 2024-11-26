@@ -4,14 +4,14 @@
 
 // A sequencer class for the icache memory agent.
 
-class ibex_icache_mem_sequencer
-  extends dv_base_sequencer #(.ITEM_T (ibex_icache_mem_resp_item),
-                              .CFG_T  (ibex_icache_mem_agent_cfg));
+class ibex_xif_icache_mem_sequencer
+  extends dv_base_sequencer #(.ITEM_T (ibex_xif_icache_mem_resp_item),
+                              .CFG_T  (ibex_xif_icache_mem_agent_cfg));
 
-  `uvm_component_utils(ibex_icache_mem_sequencer)
+  `uvm_component_utils(ibex_xif_icache_mem_sequencer)
   `uvm_component_new
 
-  uvm_tlm_analysis_fifo #(ibex_icache_mem_req_item) request_fifo;
+  uvm_tlm_analysis_fifo #(ibex_xif_icache_mem_req_item) request_fifo;
   uvm_tlm_analysis_fifo #(bit [31:0])               seed_fifo;
 
   // An objection used for heartbeat tracking. Set with register_hb.

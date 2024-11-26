@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
-interface ibex_icache_core_if (input clk, input rst_n);
+interface ibex_xif_icache_core_if (input clk, input rst_n);
 
   // Set when core is enabled (and might request instructions soon)
   logic         req;
@@ -65,7 +65,7 @@ interface ibex_icache_core_if (input clk, input rst_n);
 
 
   // SVA module
-  ibex_icache_core_protocol_checker checker_i (.*);
+  ibex_xif_icache_core_protocol_checker checker_i (.*);
 
 
   // Drive the branch pin for a single cycle, redirecting the cache to the given instruction

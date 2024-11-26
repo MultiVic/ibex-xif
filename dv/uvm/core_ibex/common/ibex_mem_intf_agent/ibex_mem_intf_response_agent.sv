@@ -3,40 +3,40 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-// CLASS: ibex_mem_intf_response_agent
+// CLASS: ibex_xif_mem_intf_response_agent
 //------------------------------------------------------------------------------
 
-class ibex_mem_intf_response_agent extends uvm_agent;
+class ibex_xif_mem_intf_response_agent extends uvm_agent;
 
-  ibex_mem_intf_response_driver     driver;
-  ibex_mem_intf_response_sequencer  sequencer;
-  ibex_mem_intf_monitor             monitor;
-  ibex_mem_intf_response_agent_cfg  cfg;
+  ibex_xif_mem_intf_response_driver     driver;
+  ibex_xif_mem_intf_response_sequencer  sequencer;
+  ibex_xif_mem_intf_monitor             monitor;
+  ibex_xif_mem_intf_response_agent_cfg  cfg;
 
-  `uvm_component_utils(ibex_mem_intf_response_agent)
+  `uvm_component_utils(ibex_xif_mem_intf_response_agent)
   `uvm_component_new
 
   virtual function void build_phase(uvm_phase phase);
-    bit secure_ibex;
+    bit secure_ibex_xif;
 
     super.build_phase(phase);
-    monitor = ibex_mem_intf_monitor::type_id::create("monitor", this);
+    monitor = ibex_xif_mem_intf_monitor::type_id::create("monitor", this);
     if (cfg == null)
-      if(!uvm_config_db #(ibex_mem_intf_response_agent_cfg)::get(this, "", "cfg", cfg))
+      if(!uvm_config_db #(ibex_xif_mem_intf_response_agent_cfg)::get(this, "", "cfg", cfg))
         `uvm_fatal(`gfn, "Could not locate mem_intf cfg object in uvm_config_db!")
 
     if(get_is_active() == UVM_ACTIVE) begin
-      driver = ibex_mem_intf_response_driver::type_id::create("driver", this);
-      sequencer = ibex_mem_intf_response_sequencer::type_id::create("sequencer", this);
+      driver = ibex_xif_mem_intf_response_driver::type_id::create("driver", this);
+      sequencer = ibex_xif_mem_intf_response_sequencer::type_id::create("sequencer", this);
     end
-    if(!uvm_config_db#(virtual ibex_mem_intf)::get(this, "", "vif", cfg.vif))
+    if(!uvm_config_db#(virtual ibex_xif_mem_intf)::get(this, "", "vif", cfg.vif))
       `uvm_fatal("NOVIF",{"virtual interface must be set for: ",get_full_name(),".vif"});
 
-    if (!uvm_config_db#(bit)::get(null, "", "SecureIbex", secure_ibex)) begin
-      secure_ibex = 1'b0;
+    if (!uvm_config_db#(bit)::get(null, "", "SecureIbex", secure_ibex_xif)) begin
+      secure_ibex_xif = 1'b0;
     end
 
-    cfg.fixed_data_write_response = secure_ibex;
+    cfg.fixed_data_write_response = secure_ibex_xif;
   endfunction : build_phase
 
   function void connect_phase(uvm_phase phase);
@@ -53,4 +53,4 @@ class ibex_mem_intf_response_agent extends uvm_agent;
     sequencer.reset();
   endfunction
 
-endclass : ibex_mem_intf_response_agent
+endclass : ibex_xif_mem_intf_response_agent

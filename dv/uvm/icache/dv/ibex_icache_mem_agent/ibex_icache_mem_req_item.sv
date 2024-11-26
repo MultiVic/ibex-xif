@@ -5,11 +5,11 @@
 // An item that represents a memory request from the icache and a possible update to the backing
 // memory.
 
-class ibex_icache_mem_req_item extends uvm_sequence_item;
+class ibex_xif_icache_mem_req_item extends uvm_sequence_item;
 
   logic [31:0]      address;
 
-  `uvm_object_utils_begin(ibex_icache_mem_req_item)
+  `uvm_object_utils_begin(ibex_xif_icache_mem_req_item)
     `uvm_field_int (address,  UVM_DEFAULT | UVM_HEX)
   `uvm_object_utils_end
 

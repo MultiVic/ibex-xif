@@ -4,7 +4,7 @@
 
 // An item that represents a memory response to the icache
 
-class ibex_icache_mem_resp_item extends uvm_sequence_item;
+class ibex_xif_icache_mem_resp_item extends uvm_sequence_item;
 
   int unsigned min_response_delay = 0;
   int unsigned mid_response_delay = 5;
@@ -40,7 +40,7 @@ class ibex_icache_mem_resp_item extends uvm_sequence_item;
     (!is_grant) -> delay == 0;
   }
 
-  `uvm_object_utils_begin(ibex_icache_mem_resp_item)
+  `uvm_object_utils_begin(ibex_xif_icache_mem_resp_item)
     `uvm_field_int (is_grant, UVM_DEFAULT)
     `uvm_field_int (err,      UVM_DEFAULT)
     `uvm_field_int (address,  UVM_DEFAULT | UVM_HEX)

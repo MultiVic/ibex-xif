@@ -14,7 +14,7 @@
 //
 // [1] https://burtleburtle.net/bob/hash/integer.html
 
-class ibex_icache_mem_model #(parameter int unsigned BusWidth = 32) extends uvm_object;
+class ibex_xif_icache_mem_model #(parameter int unsigned BusWidth = 32) extends uvm_object;
 
   // If set, disable memory errors
   protected bit no_mem_errs;
@@ -24,7 +24,7 @@ class ibex_icache_mem_model #(parameter int unsigned BusWidth = 32) extends uvm_
     no_mem_errs = disable_mem_errs;
   endfunction
 
-  `uvm_object_utils_begin(ibex_icache_mem_model)
+  `uvm_object_utils_begin(ibex_xif_icache_mem_model)
     `uvm_field_int (no_mem_errs, UVM_DEFAULT)
   `uvm_object_utils_end
 

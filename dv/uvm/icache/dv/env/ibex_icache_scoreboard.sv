@@ -2,10 +2,10 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
-class ibex_icache_scoreboard
-  extends dv_base_scoreboard #(.CFG_T(ibex_icache_env_cfg), .COV_T(ibex_icache_env_cov));
+class ibex_xif_icache_scoreboard
+  extends dv_base_scoreboard #(.CFG_T(ibex_xif_icache_env_cfg), .COV_T(ibex_xif_icache_env_cov));
 
-  `uvm_component_utils(ibex_icache_scoreboard)
+  `uvm_component_utils(ibex_xif_icache_scoreboard)
 
   // TLM agent fifos
   //
@@ -13,8 +13,8 @@ class ibex_icache_scoreboard
   // from the memory driver (not monitor) and tells us about new seeds in the backing memory. These
   // are generated in the sequence, but don't cause any change on the interface, so need reporting
   // by the driver.
-  uvm_tlm_analysis_fifo #(ibex_icache_core_bus_item) core_fifo;
-  uvm_tlm_analysis_fifo #(ibex_icache_mem_bus_item)  mem_fifo;
+  uvm_tlm_analysis_fifo #(ibex_xif_icache_core_bus_item) core_fifo;
+  uvm_tlm_analysis_fifo #(ibex_xif_icache_mem_bus_item)  mem_fifo;
   uvm_tlm_analysis_fifo #(bit [31:0])                seed_fifo;
 
   localparam BusWidth = 32;
@@ -23,7 +23,7 @@ class ibex_icache_scoreboard
   // different seeds to check whether a fetch was correct, we need our own instance, rather than a
   // handle to the model used by the agent. The actual seed inside mem_model is ephemeral: we keep
   // track of state in mem_states, below.
-  ibex_icache_mem_model #(BusWidth) mem_model;
+  ibex_xif_icache_mem_model #(BusWidth) mem_model;
 
   // A queue of memory seeds, together with their associated mem_err_shift values. This gets a new
   // item every time we read a value from seed_fifo, and we store the associated mem_err_shift at
@@ -139,7 +139,7 @@ class ibex_icache_scoreboard
   endtask
 
   task process_core_fifo();
-    ibex_icache_core_bus_item item;
+    ibex_xif_icache_core_bus_item item;
     forever begin
       core_fifo.get(item);
       `uvm_info(`gfn, $sformatf("received core transaction:\n%0s", item.sprint()), UVM_HIGH)
@@ -154,7 +154,7 @@ class ibex_icache_scoreboard
     end
   endtask
 
-  task process_branch(ibex_icache_core_bus_item item);
+  task process_branch(ibex_xif_icache_core_bus_item item);
     next_addr = item.address;
 
     if (invalidate_seed > 0) begin
@@ -170,7 +170,7 @@ class ibex_icache_scoreboard
     if (!enabled) no_cache = 1'b1;
   endtask
 
-  task process_fetch(ibex_icache_core_bus_item item);
+  task process_fetch(ibex_xif_icache_core_bus_item item);
     // Check that the address is what we expect
     `DV_CHECK_EQ(item.address, next_addr)
 
@@ -184,7 +184,7 @@ class ibex_icache_scoreboard
     window_take_insn(item.address, item.err);
   endtask
 
-  task process_invalidate(ibex_icache_core_bus_item item);
+  task process_invalidate(ibex_xif_icache_core_bus_item item);
     assert(mem_states.size > 0);
     invalidate_seed = mem_states.size - 1;
 
@@ -192,12 +192,12 @@ class ibex_icache_scoreboard
     window_reset();
   endtask
 
-  task process_enable(ibex_icache_core_bus_item item);
+  task process_enable(ibex_xif_icache_core_bus_item item);
     enabled = item.enable;
     if (enabled) no_cache = 0;
   endtask
 
-  task process_busy(ibex_icache_core_bus_item item);
+  task process_busy(ibex_xif_icache_core_bus_item item);
     busy = item.busy;
     if (!busy) begin
       busy_check();
@@ -206,7 +206,7 @@ class ibex_icache_scoreboard
   endtask
 
   task process_mem_fifo();
-    ibex_icache_mem_bus_item item;
+    ibex_xif_icache_mem_bus_item item;
     forever begin
       mem_fifo.get(item);
       `uvm_info(`gfn, $sformatf("received mem transaction:\n%0s", item.sprint()), UVM_HIGH)
@@ -266,8 +266,8 @@ class ibex_icache_scoreboard
 
   function void check_phase(uvm_phase phase);
     super.check_phase(phase);
-    `DV_EOT_PRINT_TLM_FIFO_CONTENTS(ibex_icache_core_bus_item, core_fifo)
-    `DV_EOT_PRINT_TLM_FIFO_CONTENTS(ibex_icache_mem_bus_item,  mem_fifo)
+    `DV_EOT_PRINT_TLM_FIFO_CONTENTS(ibex_xif_icache_core_bus_item, core_fifo)
+    `DV_EOT_PRINT_TLM_FIFO_CONTENTS(ibex_xif_icache_mem_bus_item,  mem_fifo)
   endfunction
 
   // Check whether observed fetched instruction data matches the given single memory fetch.
@@ -552,7 +552,7 @@ class ibex_icache_scoreboard
   endfunction
 
   // Check whether a fetch might be correct.
-  task automatic check_compatible(ibex_icache_core_bus_item item);
+  task automatic check_compatible(ibex_xif_icache_core_bus_item item);
     logic misaligned;
     logic good_bottom_word;
     logic uncompressed;

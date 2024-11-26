@@ -2,20 +2,20 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
-class core_ibex_scoreboard extends uvm_scoreboard;
+class core_ibex_xif_scoreboard extends uvm_scoreboard;
 
-  uvm_tlm_analysis_fifo #(ibex_rvfi_seq_item) rvfi_port;
-  core_ibex_env_cfg                           cfg;
+  uvm_tlm_analysis_fifo #(ibex_xif_rvfi_seq_item) rvfi_port;
+  core_ibex_xif_env_cfg                           cfg;
 
   // Events for Double-Fault detection
   uvm_event fault_threshold_consecutive_reached, fault_threshold_total_reached;
 
-  `uvm_component_utils(core_ibex_scoreboard)
+  `uvm_component_utils(core_ibex_xif_scoreboard)
   `uvm_component_new
 
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    if (!uvm_config_db#(core_ibex_env_cfg)::get(this, "", "cfg", cfg)) begin
+    if (!uvm_config_db#(core_ibex_xif_env_cfg)::get(this, "", "cfg", cfg)) begin
       `uvm_fatal(get_full_name(), "Cannot get cfg")
     end
     rvfi_port  = new("rvfi_port_scoreboard", this);
@@ -33,7 +33,7 @@ class core_ibex_scoreboard extends uvm_scoreboard;
     int unsigned double_fault_cnt_consecutive = 0;
     bit          double_fault_pulse_seen = 1'b0;
 
-    ibex_rvfi_seq_item rvfi_instr;
+    ibex_xif_rvfi_seq_item rvfi_instr;
 
     fault_threshold_consecutive_reached = new();
     fault_threshold_total_reached = new();
@@ -75,12 +75,12 @@ class core_ibex_scoreboard extends uvm_scoreboard;
       // corresponding to the faulting instruction is generated. Hence we
       // latch that pulse when it is seen, and then reset above when the
       // seq_item arrives.
-      // https://github.com/lowRISC/ibex/pull/1848#discussion_r995903762
+      // https://github.com/lowRISC/ibex_xif/pull/1848#discussion_r995903762
       begin
         forever begin
-          @(posedge cfg.ibex_dut_vif.dut_cb.double_fault_seen);
+          @(posedge cfg.ibex_xif_dut_vif.dut_cb.double_fault_seen);
           double_fault_pulse_seen = 1'b1;
-          cfg.ibex_clk_vif.wait_clks(1);
+          cfg.ibex_xif_clk_vif.wait_clks(1);
         end
       end
     join_none

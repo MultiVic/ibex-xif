@@ -4,19 +4,19 @@
 
 `include "date_dpi.svh"
 
-class core_ibex_base_test extends uvm_test;
+class core_ibex_xif_base_test extends uvm_test;
 
-  core_ibex_env                                   env;
-  core_ibex_env_cfg                               cfg;
-  core_ibex_cosim_cfg                             cosim_cfg;
-  ibex_mem_intf_response_agent_cfg                imem_cfg;
-  ibex_mem_intf_response_agent_cfg                dmem_cfg;
+  core_ibex_xif_env                                   env;
+  core_ibex_xif_env_cfg                               cfg;
+  core_ibex_xif_cosim_cfg                             cosim_cfg;
+  ibex_xif_mem_intf_response_agent_cfg                imem_cfg;
+  ibex_xif_mem_intf_response_agent_cfg                dmem_cfg;
   virtual clk_rst_if                              clk_vif;
-  virtual core_ibex_dut_probe_if                  dut_vif;
-  virtual core_ibex_instr_monitor_if              instr_vif;
-  virtual core_ibex_csr_if                        csr_vif;
+  virtual core_ibex_xif_dut_probe_if                  dut_vif;
+  virtual core_ibex_xif_instr_monitor_if              instr_vif;
+  virtual core_ibex_xif_csr_if                        csr_vif;
   mem_model_pkg::mem_model                        mem;
-  core_ibex_vseq                                  vseq;
+  core_ibex_xif_vseq                                  vseq;
   string                                          binary;
   bit                                             enable_irq_seq;
   longint                                         timeout_seconds = 1800; // wall-clock seconds
@@ -26,28 +26,28 @@ class core_ibex_base_test extends uvm_test;
   // code, the test will wait for the specifield number of cycles before starting stimulus
   // sequences (irq and debug)
   int unsigned                                    stimulus_delay = 800;
-  bit[ibex_mem_intf_agent_pkg::DATA_WIDTH-1:0]    signature_data_q[$];
-  bit[ibex_mem_intf_agent_pkg::DATA_WIDTH-1:0]    signature_data;
-  uvm_tlm_analysis_fifo #(ibex_mem_intf_seq_item) item_collected_port;
-  uvm_tlm_analysis_fifo #(ibex_mem_intf_seq_item) test_done_port;
+  bit[ibex_xif_mem_intf_agent_pkg::DATA_WIDTH-1:0]    signature_data_q[$];
+  bit[ibex_xif_mem_intf_agent_pkg::DATA_WIDTH-1:0]    signature_data;
+  uvm_tlm_analysis_fifo #(ibex_xif_mem_intf_seq_item) item_collected_port;
+  uvm_tlm_analysis_fifo #(ibex_xif_mem_intf_seq_item) test_done_port;
   uvm_tlm_analysis_fifo #(irq_seq_item)           irq_collected_port;
   uvm_phase                                       cur_run_phase;
   bit                                             test_done = 1'b0;
 
-  `uvm_component_utils(core_ibex_base_test)
+  `uvm_component_utils(core_ibex_xif_base_test)
 
   function new(string name="", uvm_component parent=null);
-    core_ibex_report_server ibex_report_server;
+    core_ibex_xif_report_server ibex_xif_report_server;
     super.new(name, parent);
-    ibex_report_server = new();
-    uvm_report_server::set_server(ibex_report_server);
+    ibex_xif_report_server = new();
+    uvm_report_server::set_server(ibex_xif_report_server);
     item_collected_port = new("item_collected_port_test", this);
     test_done_port = new("test_done_port_instance", this);
     irq_collected_port  = new("irq_collected_port_test", this);
   endfunction
 
   // NOTE: This logic should match the code in the get_isas_for_config() function in
-  //       core_ibex/scripts/scripts_lib.py: keep them in sync!
+  //       core_ibex_xif/scripts/scripts_lib.py: keep them in sync!
   function string get_isa_string();
     bit     RV32E;
     rv32m_e RV32M;
@@ -88,7 +88,7 @@ class core_ibex_base_test extends uvm_test;
     bit [31:0] pmp_num_regions;
     bit [31:0] pmp_granularity;
     bit [31:0] mhpm_counter_num;
-    bit        secure_ibex;
+    bit        secure_ibex_xif;
     bit        icache;
 
     super.build_phase(phase);
@@ -96,21 +96,21 @@ class core_ibex_base_test extends uvm_test;
     if (!uvm_config_db#(virtual clk_rst_if)::get(null, "", "clk_if", clk_vif)) begin
       `uvm_fatal(`gfn, "Cannot get clk_if")
     end
-    if (!uvm_config_db#(virtual core_ibex_dut_probe_if)::get(null, "", "dut_if", dut_vif)) begin
+    if (!uvm_config_db#(virtual core_ibex_xif_dut_probe_if)::get(null, "", "dut_if", dut_vif)) begin
       `uvm_fatal(`gfn, "Cannot get dut_if")
     end
-    if (!uvm_config_db#(virtual core_ibex_instr_monitor_if)::get(null, "",
+    if (!uvm_config_db#(virtual core_ibex_xif_instr_monitor_if)::get(null, "",
                                                                  "instr_monitor_if",
                                                                  instr_vif)) begin
       `uvm_fatal(`gfn, "Cannot get instr_monitor_if")
     end
-    if (!uvm_config_db#(virtual core_ibex_csr_if)::get(null, "", "csr_if", csr_vif)) begin
+    if (!uvm_config_db#(virtual core_ibex_xif_csr_if)::get(null, "", "csr_if", csr_vif)) begin
       `uvm_fatal(`gfn, "Cannot get csr_if")
     end
-    env = core_ibex_env::type_id::create("env", this);
-    cfg = core_ibex_env_cfg::type_id::create("cfg", this);
+    env = core_ibex_xif_env::type_id::create("env", this);
+    cfg = core_ibex_xif_env_cfg::type_id::create("cfg", this);
 
-    cosim_cfg = core_ibex_cosim_cfg::type_id::create("cosim_cfg", this);
+    cosim_cfg = core_ibex_xif_cosim_cfg::type_id::create("cosim_cfg", this);
 
     cosim_cfg.isa_string = get_isa_string();
     cosim_cfg.start_pc =    ((32'h`BOOT_ADDR & ~(32'h0000_00FF)) | 8'h80);
@@ -132,8 +132,8 @@ class core_ibex_base_test extends uvm_test;
       mhpm_counter_num = '0;
     end
 
-    if (!uvm_config_db#(bit)::get(null, "", "SecureIbex", secure_ibex)) begin
-      secure_ibex = '0;
+    if (!uvm_config_db#(bit)::get(null, "", "SecureIbex", secure_ibex_xif)) begin
+      secure_ibex_xif = '0;
     end
 
     if (!uvm_config_db#(bit)::get(null, "", "ICache", icache)) begin
@@ -144,13 +144,13 @@ class core_ibex_base_test extends uvm_test;
     cosim_cfg.pmp_granularity = pmp_granularity;
     cosim_cfg.mhpm_counter_num = mhpm_counter_num;
     cosim_cfg.relax_cosim_check = cfg.disable_cosim;
-    cosim_cfg.secure_ibex = secure_ibex;
+    cosim_cfg.secure_ibex_xif = secure_ibex_xif;
     cosim_cfg.icache = icache;
 
-    uvm_config_db#(core_ibex_cosim_cfg)::set(null, "*cosim_agent*", "cosim_cfg", cosim_cfg);
+    uvm_config_db#(core_ibex_xif_cosim_cfg)::set(null, "*cosim_agent*", "cosim_cfg", cosim_cfg);
 
-    imem_cfg = ibex_mem_intf_response_agent_cfg::type_id::create("imem_cfg", this);
-    dmem_cfg = ibex_mem_intf_response_agent_cfg::type_id::create("dmem_cfg", this);
+    imem_cfg = ibex_xif_mem_intf_response_agent_cfg::type_id::create("imem_cfg", this);
+    dmem_cfg = ibex_xif_mem_intf_response_agent_cfg::type_id::create("dmem_cfg", this);
     // Never create bad integrity bits in response to accessing uninit memory
     // on the Iside, as the Ibex can fetch speculatively.
     imem_cfg.enable_bad_intg_on_uninit_access = 0;
@@ -158,15 +158,15 @@ class core_ibex_base_test extends uvm_test;
     dmem_cfg.enable_bad_intg_on_uninit_access = 1;
     void'($value$plusargs("enable_bad_intg_on_uninit_access=%0d",
                           dmem_cfg.enable_bad_intg_on_uninit_access));
-    uvm_config_db#(ibex_mem_intf_response_agent_cfg)::
+    uvm_config_db#(ibex_xif_mem_intf_response_agent_cfg)::
       set(this, "*instr_if_response_agent*", "cfg", imem_cfg);
-    uvm_config_db#(ibex_mem_intf_response_agent_cfg)::
+    uvm_config_db#(ibex_xif_mem_intf_response_agent_cfg)::
       set(this, "*data_if_response_agent*", "cfg", dmem_cfg);
 
-    uvm_config_db#(core_ibex_env_cfg)::set(this, "*", "cfg", cfg);
+    uvm_config_db#(core_ibex_xif_env_cfg)::set(this, "*", "cfg", cfg);
     mem = mem_model_pkg::mem_model#()::type_id::create("mem");
     // Create virtual sequence and assign memory handle
-    vseq = core_ibex_vseq::type_id::create("vseq");
+    vseq = core_ibex_xif_vseq::type_id::create("vseq");
     vseq.mem = mem;
     vseq.cfg = cfg;
   endfunction
@@ -188,7 +188,7 @@ class core_ibex_base_test extends uvm_test;
     enable_irq_seq = cfg.enable_irq_single_seq || cfg.enable_irq_multiple_seq;
     phase.raise_objection(this);
     cur_run_phase = phase;
-    dut_vif.dut_cb.fetch_enable <= ibex_pkg::IbexMuBiOff;
+    dut_vif.dut_cb.fetch_enable <= ibex_xif_pkg::IbexMuBiOff;
     clk_vif.wait_clks(100);
 
     void'($value$plusargs("bin=%0s", binary));
@@ -197,7 +197,7 @@ class core_ibex_base_test extends uvm_test;
     load_binary_to_mems();
     `uvm_info(get_full_name(), $sformatf("Running test binary : %0s", binary), UVM_LOW)
 
-    dut_vif.dut_cb.fetch_enable <= ibex_pkg::IbexMuBiOn;
+    dut_vif.dut_cb.fetch_enable <= ibex_xif_pkg::IbexMuBiOn;
     fork
       send_stimulus();
       handle_reset();
@@ -340,19 +340,19 @@ class core_ibex_base_test extends uvm_test;
     check_perf_stats();
     // De-assert fetch enable to finish the test
     clk_vif.wait_clks(10);
-    dut_vif.dut_cb.fetch_enable <= ibex_pkg::IbexMuBiOff;
+    dut_vif.dut_cb.fetch_enable <= ibex_xif_pkg::IbexMuBiOff;
     // Wait some time for the remaining instruction to finish
     clk_vif.wait_clks(3000);
   endtask
 
 
   virtual task wait_for_mem_txn(
-    input bit [ibex_mem_intf_agent_pkg::ADDR_WIDTH-1:0] ref_addr,
+    input bit [ibex_xif_mem_intf_agent_pkg::ADDR_WIDTH-1:0] ref_addr,
     input signature_type_t ref_type,
-    input uvm_tlm_analysis_fifo #(ibex_mem_intf_seq_item) txn_port = item_collected_port
+    input uvm_tlm_analysis_fifo #(ibex_xif_mem_intf_seq_item) txn_port = item_collected_port
     );
 
-    ibex_mem_intf_seq_item mem_txn;
+    ibex_xif_mem_intf_seq_item mem_txn;
     `uvm_info(`gfn, $sformatf("Awaiting riscv-dv handshake at 0x%0h, Type : %0s",
                               ref_addr, ref_type), UVM_HIGH)
     forever begin
@@ -464,10 +464,10 @@ class core_ibex_base_test extends uvm_test;
     end while (signature_data != core_status);
   endtask
 
-  virtual task wait_for_core_exception(ibex_pkg::exc_cause_t exc_cause);
-    wait(dut_vif.ctrl_fsm_cs == ibex_pkg::FLUSH && dut_vif.exc_cause == exc_cause &&
+  virtual task wait_for_core_exception(ibex_xif_pkg::exc_cause_t exc_cause);
+    wait(dut_vif.ctrl_fsm_cs == ibex_xif_pkg::FLUSH && dut_vif.exc_cause == exc_cause &&
       dut_vif.csr_save_cause);
-    wait(dut_vif.ctrl_fsm_cs != ibex_pkg::FLUSH);
+    wait(dut_vif.ctrl_fsm_cs != ibex_xif_pkg::FLUSH);
   endtask
 
   virtual task wait_for_custom_test_done();

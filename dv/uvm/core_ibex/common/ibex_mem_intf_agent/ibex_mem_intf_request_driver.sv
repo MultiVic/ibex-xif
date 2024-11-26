@@ -3,22 +3,22 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-// CLASS: ibex_mem_intf_request_driver
+// CLASS: ibex_xif_mem_intf_request_driver
 //------------------------------------------------------------------------------
 
-class ibex_mem_intf_request_driver extends uvm_driver #(ibex_mem_intf_seq_item);
+class ibex_xif_mem_intf_request_driver extends uvm_driver #(ibex_xif_mem_intf_seq_item);
 
-  protected virtual ibex_mem_intf vif;
+  protected virtual ibex_xif_mem_intf vif;
 
-  `uvm_component_utils(ibex_mem_intf_request_driver)
+  `uvm_component_utils(ibex_xif_mem_intf_request_driver)
   `uvm_component_new
 
-  mailbox #(ibex_mem_intf_seq_item) rdata_queue;
+  mailbox #(ibex_xif_mem_intf_seq_item) rdata_queue;
 
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
     rdata_queue = new();
-    if(!uvm_config_db#(virtual ibex_mem_intf)::get(this, "", "vif", vif))
+    if(!uvm_config_db#(virtual ibex_xif_mem_intf)::get(this, "", "vif", vif))
       `uvm_fatal("NOVIF",{"virtual interface must be set for: ",get_full_name(),".vif"});
   endfunction: build_phase
 
@@ -55,7 +55,7 @@ class ibex_mem_intf_request_driver extends uvm_driver #(ibex_mem_intf_seq_item);
     end
   endtask : reset_signals
 
-  virtual protected task drive_transfer (ibex_mem_intf_seq_item trans);
+  virtual protected task drive_transfer (ibex_xif_mem_intf_seq_item trans);
     if (trans.req_delay > 0) begin
       vif.wait_clks(trans.req_delay);
     end
@@ -77,7 +77,7 @@ class ibex_mem_intf_request_driver extends uvm_driver #(ibex_mem_intf_seq_item);
   endtask : drive_transfer
 
   virtual protected task collect_response();
-    ibex_mem_intf_seq_item tr;
+    ibex_xif_mem_intf_seq_item tr;
     forever begin
       rdata_queue.get(tr);
       vif.wait_clks(1);
@@ -89,4 +89,4 @@ class ibex_mem_intf_request_driver extends uvm_driver #(ibex_mem_intf_seq_item);
     end
   endtask : collect_response
 
-endclass : ibex_mem_intf_request_driver
+endclass : ibex_xif_mem_intf_request_driver

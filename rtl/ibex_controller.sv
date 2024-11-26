@@ -10,7 +10,7 @@
 `include "prim_assert.sv"
 `include "dv_fcov_macros.svh"
 
-module ibex_controller #(
+module ibex_xif_controller #(
   parameter bit WritebackStage  = 1'b0,
   parameter bit BranchPredictor = 1'b0,
   parameter bit MemECC          = 1'b0
@@ -50,12 +50,12 @@ module ibex_controller #(
   // to prefetcher
   output logic                  instr_req_o,             // start fetching instructions
   output logic                  pc_set_o,                // jump to address set by pc_mux
-  output ibex_pkg::pc_sel_e     pc_mux_o,                // IF stage fetch address selector
+  output ibex_xif_pkg::pc_sel_e     pc_mux_o,                // IF stage fetch address selector
                                                          // (boot, normal, exception...)
   output logic                  nt_branch_mispredict_o,  // Not-taken branch in ID/EX was
                                                          // mispredicted (predicted taken)
-  output ibex_pkg::exc_pc_sel_e exc_pc_mux_o,            // IF stage selector for exception PC
-  output ibex_pkg::exc_cause_t  exc_cause_o,             // for IF stage, CSRs
+  output ibex_xif_pkg::exc_pc_sel_e exc_pc_mux_o,            // IF stage selector for exception PC
+  output ibex_xif_pkg::exc_cause_t  exc_cause_o,             // for IF stage, CSRs
 
   // LSU
   input  logic [31:0]           lsu_addr_last_i,         // for mtval
@@ -74,14 +74,14 @@ module ibex_controller #(
   // interrupt signals
   input  logic                  csr_mstatus_mie_i,       // M-mode interrupt enable bit
   input  logic                  irq_pending_i,           // interrupt request pending
-  input  ibex_pkg::irqs_t       irqs_i,                  // interrupt requests qualified with
+  input  ibex_xif_pkg::irqs_t       irqs_i,                  // interrupt requests qualified with
                                                          // mie CSR
   input  logic                  irq_nm_ext_i,            // non-maskeable interrupt
   output logic                  nmi_mode_o,              // core executing NMI handler
 
   // debug signals
   input  logic                  debug_req_i,
-  output ibex_pkg::dbg_cause_e  debug_cause_o,
+  output ibex_xif_pkg::dbg_cause_e  debug_cause_o,
   output logic                  debug_csr_save_o,
   output logic                  debug_mode_o,
   output logic                  debug_mode_entering_o,
@@ -97,7 +97,7 @@ module ibex_controller #(
   output logic                  csr_restore_dret_id_o,
   output logic                  csr_save_cause_o,
   output logic [31:0]           csr_mtval_o,
-  input  ibex_pkg::priv_lvl_e   priv_mode_i,
+  input  ibex_xif_pkg::priv_lvl_e   priv_mode_i,
 
   // stall & flush signals
   input  logic                  stall_id_i,
@@ -111,7 +111,7 @@ module ibex_controller #(
   output logic                  perf_tbranch_o           // we are executing a taken branch
                                                          // instruction
 );
-  import ibex_pkg::*;
+  import ibex_xif_pkg::*;
 
   ctrl_fsm_e ctrl_fsm_cs, ctrl_fsm_ns;
 
@@ -153,7 +153,7 @@ module ibex_controller #(
   logic                     irq_nm;
   logic                     irq_nm_int;
   logic [31:0]              irq_nm_int_mtval;
-  ibex_pkg::nmi_int_cause_e irq_nm_int_cause;
+  ibex_xif_pkg::nmi_int_cause_e irq_nm_int_cause;
 
 
   logic [3:0] mfip_id;
@@ -174,7 +174,7 @@ module ibex_controller #(
   always_ff @(negedge clk_i) begin
     // print warning in case of decoding errors
     if ((ctrl_fsm_cs == DECODE) && instr_valid_i && !instr_fetch_err_i && illegal_insn_d) begin
-      $display("%t: Illegal instruction (hart %0x) at PC 0x%h: 0x%h", $time, u_ibex_core.hart_id_i,
+      $display("%t: Illegal instruction (hart %0x) at PC 0x%h: 0x%h", $time, u_ibex_xif_core.hart_id_i,
                pc_id_i, id_stage_i.instr_rdata_i);
     end
   end
@@ -198,7 +198,7 @@ module ibex_controller #(
   assign instr_fetch_err = instr_fetch_err_i & instr_valid_i;
 
   // This is recorded in the illegal_insn_q flop to help timing.  Specifically
-  // it is needed to break the path from ibex_cs_registers/illegal_csr_insn_o
+  // it is needed to break the path from ibex_xif_cs_registers/illegal_csr_insn_o
   // to pc_set_o.  Clear when controller is in FLUSH so it won't remain set
   // once illegal instruction is handled.
   // illegal_insn_i only set when instr_valid_i is set.
@@ -399,7 +399,7 @@ module ibex_controller #(
                                                          1'b0;
 
   // NMI can be produced from an external (irq_nm_i top level input) or an internal (within
-  // ibex_core) source. For internal sources the cause is specified via irq_nm_int_cause.
+  // ibex_xif_core) source. For internal sources the cause is specified via irq_nm_int_cause.
   assign irq_nm = irq_nm_ext_i | irq_nm_int;
 
   // MIE bit only applies when in M mode
@@ -1001,7 +1001,7 @@ module ibex_controller #(
 
   `ifdef RVFI
     // Workaround for internal verilator error when using hierarchical refers to calcuate this
-    // directly in ibex_core
+    // directly in ibex_xif_core
     logic rvfi_flush_next;
 
     assign rvfi_flush_next = ctrl_fsm_ns == FLUSH;

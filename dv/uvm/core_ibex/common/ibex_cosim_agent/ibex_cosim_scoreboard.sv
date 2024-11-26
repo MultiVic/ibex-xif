@@ -5,19 +5,19 @@
 `include "spike_cosim_dpi.svh"
 `include "cosim_dpi.svh"
 
-class ibex_cosim_scoreboard extends uvm_scoreboard;
+class ibex_xif_cosim_scoreboard extends uvm_scoreboard;
   chandle cosim_handle;
 
-  core_ibex_cosim_cfg cfg;
+  core_ibex_xif_cosim_cfg cfg;
 
-  uvm_tlm_analysis_fifo #(ibex_rvfi_seq_item)       rvfi_port;
-  uvm_tlm_analysis_fifo #(ibex_mem_intf_seq_item)   dmem_port;
-  uvm_tlm_analysis_fifo #(ibex_mem_intf_seq_item)   imem_port;
-  uvm_tlm_analysis_fifo #(ibex_ifetch_seq_item)     ifetch_port;
-  uvm_tlm_analysis_fifo #(ibex_ifetch_pmp_seq_item) ifetch_pmp_port;
+  uvm_tlm_analysis_fifo #(ibex_xif_rvfi_seq_item)       rvfi_port;
+  uvm_tlm_analysis_fifo #(ibex_xif_mem_intf_seq_item)   dmem_port;
+  uvm_tlm_analysis_fifo #(ibex_xif_mem_intf_seq_item)   imem_port;
+  uvm_tlm_analysis_fifo #(ibex_xif_ifetch_seq_item)     ifetch_port;
+  uvm_tlm_analysis_fifo #(ibex_xif_ifetch_pmp_seq_item) ifetch_pmp_port;
 
-  virtual core_ibex_instr_monitor_if instr_vif;
-  virtual core_ibex_dut_probe_if     dut_vif;
+  virtual core_ibex_xif_instr_monitor_if instr_vif;
+  virtual core_ibex_xif_dut_probe_if     dut_vif;
 
   uvm_event reset_e;
   uvm_event check_inserted_iside_error_e;
@@ -32,7 +32,7 @@ class ibex_cosim_scoreboard extends uvm_scoreboard;
 
   iside_err_t iside_error_queue [$];
 
-  `uvm_component_utils(ibex_cosim_scoreboard)
+  `uvm_component_utils(ibex_xif_cosim_scoreboard)
 
   function new(string name="", uvm_component parent=null);
     super.new(name, parent);
@@ -50,16 +50,16 @@ class ibex_cosim_scoreboard extends uvm_scoreboard;
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
 
-    if (!uvm_config_db#(core_ibex_cosim_cfg)::get(this, "", "cosim_cfg", cfg)) begin
+    if (!uvm_config_db#(core_ibex_xif_cosim_cfg)::get(this, "", "cosim_cfg", cfg)) begin
       `uvm_fatal(`gfn, "Cannot get cosim configuration")
     end
 
-    if (!uvm_config_db#(virtual core_ibex_instr_monitor_if)::get(null, "", "instr_monitor_if",
+    if (!uvm_config_db#(virtual core_ibex_xif_instr_monitor_if)::get(null, "", "instr_monitor_if",
                                                                  instr_vif)) begin
       `uvm_fatal(`gfn, "Cannot get instr_monitor_if")
     end
 
-    if (!uvm_config_db#(virtual core_ibex_dut_probe_if)::get(null, "", "dut_if",
+    if (!uvm_config_db#(virtual core_ibex_xif_dut_probe_if)::get(null, "", "dut_if",
                                                                  dut_vif)) begin
       `uvm_fatal(`gfn, "Cannot get dut_probe_if")
     end
@@ -72,7 +72,7 @@ class ibex_cosim_scoreboard extends uvm_scoreboard;
 
     // TODO: Ensure log file on reset gets append rather than overwrite?
     cosim_handle = spike_cosim_init(cfg.isa_string, cfg.start_pc, cfg.start_mtvec, cfg.log_file,
-      cfg.pmp_num_regions, cfg.pmp_granularity, cfg.mhpm_counter_num, cfg.secure_ibex, cfg.icache);
+      cfg.pmp_num_regions, cfg.pmp_granularity, cfg.mhpm_counter_num, cfg.secure_ibex_xif, cfg.icache);
 
     if (cosim_handle == null) begin
       `uvm_fatal(`gfn, "Could not initialise cosim")
@@ -110,7 +110,7 @@ class ibex_cosim_scoreboard extends uvm_scoreboard;
   endtask : run_phase
 
   task run_cosim_rvfi();
-    ibex_rvfi_seq_item rvfi_instr;
+    ibex_xif_rvfi_seq_item rvfi_instr;
 
     forever begin
       rvfi_port.get(rvfi_instr);
@@ -151,9 +151,9 @@ class ibex_cosim_scoreboard extends uvm_scoreboard;
       // Set performance counters through a pseudo-backdoor write
       for (int i=0; i < 10; i++) begin
         riscv_cosim_set_csr(cosim_handle,
-                            ibex_pkg::CSR_MHPMCOUNTER3 + i, rvfi_instr.mhpmcounters[i]);
+                            ibex_xif_pkg::CSR_MHPMCOUNTER3 + i, rvfi_instr.mhpmcounters[i]);
         riscv_cosim_set_csr(cosim_handle,
-                            ibex_pkg::CSR_MHPMCOUNTER3H + i, rvfi_instr.mhpmcountersh[i]);
+                            ibex_xif_pkg::CSR_MHPMCOUNTER3H + i, rvfi_instr.mhpmcountersh[i]);
       end
 
       riscv_cosim_set_ic_scr_key_valid(cosim_handle, rvfi_instr.ic_scr_key_valid);
@@ -172,7 +172,7 @@ class ibex_cosim_scoreboard extends uvm_scoreboard;
   endtask: run_cosim_rvfi
 
   task run_cosim_dmem();
-    ibex_mem_intf_seq_item mem_op;
+    ibex_xif_mem_intf_seq_item mem_op;
 
     forever begin
       dmem_port.get(mem_op);
@@ -183,7 +183,7 @@ class ibex_cosim_scoreboard extends uvm_scoreboard;
   endtask: run_cosim_dmem
 
   task run_cosim_imem();
-    ibex_mem_intf_seq_item mem_op;
+    ibex_xif_mem_intf_seq_item mem_op;
 
     forever begin
       // Take stream of transaction from imem monitor. Where an imem access has an error record it
@@ -202,7 +202,7 @@ class ibex_cosim_scoreboard extends uvm_scoreboard;
   endtask: run_cosim_imem
 
   task run_cosim_ifetch();
-    ibex_ifetch_seq_item ifetch;
+    ibex_xif_ifetch_seq_item ifetch;
     bit [31:0] aligned_fetch_addr;
     bit [31:0] aligned_fetch_addr_next;
 
@@ -241,7 +241,7 @@ class ibex_cosim_scoreboard extends uvm_scoreboard;
   endtask: run_cosim_ifetch
 
   task run_cosim_ifetch_pmp();
-    ibex_ifetch_pmp_seq_item ifetch_pmp;
+    ibex_xif_ifetch_pmp_seq_item ifetch_pmp;
 
     // Keep track of which addresses have seen PMP failures.
     forever begin
@@ -354,4 +354,4 @@ class ibex_cosim_scoreboard extends uvm_scoreboard;
   task handle_reset();
     init_cosim();
   endtask
-endclass : ibex_cosim_scoreboard
+endclass : ibex_xif_cosim_scoreboard

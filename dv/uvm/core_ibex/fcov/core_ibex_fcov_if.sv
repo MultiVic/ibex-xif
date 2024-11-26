@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 `include "prim_assert.sv"
-`include "core_ibex_csr_categories.svh"
+`include "core_ibex_xif_csr_categories.svh"
 
-interface core_ibex_fcov_if import ibex_pkg::*; (
+interface core_ibex_xif_fcov_if import ibex_xif_pkg::*; (
   input clk_i,
   input rst_ni,
 
@@ -20,7 +20,7 @@ interface core_ibex_fcov_if import ibex_pkg::*; (
   input fcov_rf_ecc_err_a_id,
   input fcov_rf_ecc_err_b_id,
 
-  input ibex_mubi_t fetch_enable_i
+  input ibex_xif_mubi_t fetch_enable_i
 );
   `include "dv_fcov_macros.svh"
   import uvm_pkg::*;
@@ -71,15 +71,15 @@ interface core_ibex_fcov_if import ibex_pkg::*; (
     id_instr_category = InstrCategoryOther;
 
     case (id_stage_i.instr_rdata_i[6:0])
-      ibex_pkg::OPCODE_LUI:    id_instr_category = InstrCategoryALU;
-      ibex_pkg::OPCODE_AUIPC:  id_instr_category = InstrCategoryALU;
-      ibex_pkg::OPCODE_JAL:    id_instr_category = InstrCategoryJump;
-      ibex_pkg::OPCODE_JALR:   id_instr_category = InstrCategoryJump;
-      ibex_pkg::OPCODE_BRANCH: id_instr_category = InstrCategoryBranch;
-      ibex_pkg::OPCODE_LOAD:   id_instr_category = InstrCategoryLoad;
-      ibex_pkg::OPCODE_STORE:  id_instr_category = InstrCategoryStore;
-      ibex_pkg::OPCODE_OP_IMM: id_instr_category = InstrCategoryALU;
-      ibex_pkg::OPCODE_OP: begin
+      ibex_xif_pkg::OPCODE_LUI:    id_instr_category = InstrCategoryALU;
+      ibex_xif_pkg::OPCODE_AUIPC:  id_instr_category = InstrCategoryALU;
+      ibex_xif_pkg::OPCODE_JAL:    id_instr_category = InstrCategoryJump;
+      ibex_xif_pkg::OPCODE_JALR:   id_instr_category = InstrCategoryJump;
+      ibex_xif_pkg::OPCODE_BRANCH: id_instr_category = InstrCategoryBranch;
+      ibex_xif_pkg::OPCODE_LOAD:   id_instr_category = InstrCategoryLoad;
+      ibex_xif_pkg::OPCODE_STORE:  id_instr_category = InstrCategoryStore;
+      ibex_xif_pkg::OPCODE_OP_IMM: id_instr_category = InstrCategoryALU;
+      ibex_xif_pkg::OPCODE_OP: begin
         if ({id_stage_i.instr_rdata_i[26], id_stage_i.instr_rdata_i[13:12]} == {1'b1, 2'b01}) begin
           id_instr_category = InstrCategoryALU; // reg-reg/reg-imm ops
         end else if (id_stage_i.instr_rdata_i[31:25] inside {7'b000_0000, 7'b010_0000, 7'b011_0000,
@@ -93,7 +93,7 @@ interface core_ibex_fcov_if import ibex_pkg::*; (
           end
         end
       end
-      ibex_pkg::OPCODE_SYSTEM: begin
+      ibex_xif_pkg::OPCODE_SYSTEM: begin
         if (id_stage_i.instr_rdata_i[14:12] == 3'b000) begin
           case (id_stage_i.instr_rdata_i[31:20])
             12'h000: id_instr_category = InstrCategoryECall;
@@ -114,7 +114,7 @@ interface core_ibex_fcov_if import ibex_pkg::*; (
           id_instr_category = InstrCategoryCSRAccess;
         end
       end
-      ibex_pkg::OPCODE_MISC_MEM: begin
+      ibex_xif_pkg::OPCODE_MISC_MEM: begin
         case (id_stage_i.instr_rdata_i[14:12])
           3'b000: id_instr_category = InstrCategoryFence;
           3'b001: id_instr_category = InstrCategoryFenceI;
@@ -759,7 +759,7 @@ interface core_ibex_fcov_if import ibex_pkg::*; (
   bit en_uarch_cov;
 
   initial begin
-   void'($value$plusargs("enable_ibex_fcov=%d", en_uarch_cov));
+   void'($value$plusargs("enable_ibex_xif_fcov=%d", en_uarch_cov));
   end
 
   `DV_FCOV_INSTANTIATE_CG(uarch_cg, en_uarch_cov)

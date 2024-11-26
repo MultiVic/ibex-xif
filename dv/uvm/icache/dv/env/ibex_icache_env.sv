@@ -2,16 +2,16 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
-class ibex_icache_env extends dv_base_env #(
-    .CFG_T              (ibex_icache_env_cfg),
-    .COV_T              (ibex_icache_env_cov),
-    .VIRTUAL_SEQUENCER_T(ibex_icache_virtual_sequencer),
-    .SCOREBOARD_T       (ibex_icache_scoreboard)
+class ibex_xif_icache_env extends dv_base_env #(
+    .CFG_T              (ibex_xif_icache_env_cfg),
+    .COV_T              (ibex_xif_icache_env_cov),
+    .VIRTUAL_SEQUENCER_T(ibex_xif_icache_virtual_sequencer),
+    .SCOREBOARD_T       (ibex_xif_icache_scoreboard)
   );
-  `uvm_component_utils(ibex_icache_env)
+  `uvm_component_utils(ibex_xif_icache_env)
 
-  ibex_icache_core_agent core_agent;
-  ibex_icache_mem_agent  mem_agent;
+  ibex_xif_icache_core_agent core_agent;
+  ibex_xif_icache_mem_agent  mem_agent;
   scrambling_key_agent   scrambling_key_agent_h;
 
   // Heartbeat tracking
@@ -24,11 +24,11 @@ class ibex_icache_env extends dv_base_env #(
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
     // create components
-    core_agent = ibex_icache_core_agent::type_id::create("core_agent", this);
-    uvm_config_db#(ibex_icache_core_agent_cfg)::set(this, "core_agent*", "cfg", cfg.core_agent_cfg);
+    core_agent = ibex_xif_icache_core_agent::type_id::create("core_agent", this);
+    uvm_config_db#(ibex_xif_icache_core_agent_cfg)::set(this, "core_agent*", "cfg", cfg.core_agent_cfg);
 
-    mem_agent = ibex_icache_mem_agent::type_id::create("mem_agent", this);
-    uvm_config_db#(ibex_icache_mem_agent_cfg)::set(this, "mem_agent*", "cfg", cfg.mem_agent_cfg);
+    mem_agent = ibex_xif_icache_mem_agent::type_id::create("mem_agent", this);
+    uvm_config_db#(ibex_xif_icache_mem_agent_cfg)::set(this, "mem_agent*", "cfg", cfg.mem_agent_cfg);
     scrambling_key_agent_h = scrambling_key_agent::type_id::create("scrambling_key_agent_h", this);
     uvm_config_db#(scrambling_key_agent_cfg)::set(this, "scrambling_key_agent_h", "cfg",
                                                   cfg.scrambling_key_cfg);
@@ -40,8 +40,8 @@ class ibex_icache_env extends dv_base_env #(
     hb_event     = new("hb_event");
 
     cfg.clk_rst_vif.set_sole_clock();
-    if (!uvm_config_db#(ibex_icache_ram_vif)::get(this, "", "vif", cfg.ram_if)) begin
-      `uvm_fatal(`gfn, "failed to get ibex_icache_ram_vif handle from uvm_config_db")
+    if (!uvm_config_db#(ibex_xif_icache_ram_vif)::get(this, "", "vif", cfg.ram_if)) begin
+      `uvm_fatal(`gfn, "failed to get ibex_xif_icache_ram_vif handle from uvm_config_db")
     end
 
   endfunction

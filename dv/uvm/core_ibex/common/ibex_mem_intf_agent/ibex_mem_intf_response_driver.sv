@@ -3,17 +3,17 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-// CLASS: ibex_mem_intf_response_driver
+// CLASS: ibex_xif_mem_intf_response_driver
 //------------------------------------------------------------------------------
 
-class ibex_mem_intf_response_driver extends uvm_driver #(ibex_mem_intf_seq_item);
+class ibex_xif_mem_intf_response_driver extends uvm_driver #(ibex_xif_mem_intf_seq_item);
 
-  ibex_mem_intf_response_agent_cfg cfg;
+  ibex_xif_mem_intf_response_agent_cfg cfg;
 
-  `uvm_component_utils(ibex_mem_intf_response_driver)
+  `uvm_component_utils(ibex_xif_mem_intf_response_driver)
   `uvm_component_new
 
-  mailbox #(ibex_mem_intf_seq_item) rdata_queue;
+  mailbox #(ibex_xif_mem_intf_seq_item) rdata_queue;
 
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
@@ -38,7 +38,7 @@ class ibex_mem_intf_response_driver extends uvm_driver #(ibex_mem_intf_seq_item)
   endtask : run_phase
 
   virtual protected task handle_reset();
-    ibex_mem_intf_seq_item req;
+    ibex_xif_mem_intf_seq_item req;
     // Clear mailbox
     while (rdata_queue.try_get(req));
     // Clear seq_item_port
@@ -65,7 +65,7 @@ class ibex_mem_intf_response_driver extends uvm_driver #(ibex_mem_intf_seq_item)
     fork
       begin
         forever begin
-          ibex_mem_intf_seq_item req, req_c;
+          ibex_xif_mem_intf_seq_item req, req_c;
           cfg.vif.wait_clks(1);
           seq_item_port.get_next_item(req);
           $cast(req_c, req.clone());
@@ -110,7 +110,7 @@ class ibex_mem_intf_response_driver extends uvm_driver #(ibex_mem_intf_seq_item)
   endtask : send_grant
 
   virtual protected task send_read_data();
-    ibex_mem_intf_seq_item tr;
+    ibex_xif_mem_intf_seq_item tr;
     forever begin
       cfg.vif.wait_clks(1);
       cfg.vif.response_driver_cb.rvalid <=  1'b0;
@@ -143,4 +143,4 @@ class ibex_mem_intf_response_driver extends uvm_driver #(ibex_mem_intf_seq_item)
     end
   endtask : send_read_data
 
-endclass : ibex_mem_intf_response_driver
+endclass : ibex_xif_mem_intf_response_driver

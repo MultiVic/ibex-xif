@@ -2,9 +2,9 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
-class ibex_icache_oldval_test extends ibex_icache_base_test;
+class ibex_xif_icache_oldval_test extends ibex_xif_icache_base_test;
 
-  `uvm_component_utils(ibex_icache_oldval_test)
+  `uvm_component_utils(ibex_xif_icache_oldval_test)
   `uvm_component_new
 
   // At end-of-test, look at the counters to see how often we've seen a value that isn't the most
@@ -40,5 +40,5 @@ class ibex_icache_oldval_test extends ibex_icache_base_test;
 
   endfunction : check_phase
 
-endclass : ibex_icache_oldval_test
+endclass : ibex_xif_icache_oldval_test
 

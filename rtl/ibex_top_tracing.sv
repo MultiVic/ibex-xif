@@ -3,10 +3,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /**
- * Top level module of the ibex RISC-V core with tracing enabled
+ * Top level module of the ibex_xif RISC-V core with tracing enabled
  */
 
-module ibex_top_tracing import ibex_pkg::*; #(
+module ibex_xif_top_tracing import ibex_xif_pkg::*; #(
   parameter bit          PMPEnable        = 1'b0,
   parameter int unsigned PMPGranularity   = 0,
   parameter int unsigned PMPNumRegions    = 4,
@@ -83,7 +83,7 @@ module ibex_top_tracing import ibex_pkg::*; #(
   output logic                         double_fault_seen_o,
 
   // CPU Control Signals
-  input  ibex_mubi_t                   fetch_enable_i,
+  input  ibex_xif_mubi_t                   fetch_enable_i,
   output logic                         alert_minor_o,
   output logic                         alert_major_internal_o,
   output logic                         alert_major_bus_o,
@@ -91,7 +91,7 @@ module ibex_top_tracing import ibex_pkg::*; #(
 
 );
 
-  // ibex_tracer relies on the signals from the RISC-V Formal Interface
+  // ibex_xif_tracer relies on the signals from the RISC-V Formal Interface
   `ifndef RVFI
     $fatal("Fatal error: RVFI needs to be defined globally.");
   `endif
@@ -160,7 +160,7 @@ module ibex_top_tracing import ibex_pkg::*; #(
   assign unused_rvfi_ext_ic_scr_key_valid = rvfi_ext_ic_scr_key_valid;
   assign unused_rvfi_ext_irq_valid = rvfi_ext_irq_valid;
 
-  ibex_top #(
+  ibex_xif_top #(
     .PMPEnable        ( PMPEnable        ),
     .PMPGranularity   ( PMPGranularity   ),
     .PMPNumRegions    ( PMPNumRegions    ),
@@ -183,7 +183,7 @@ module ibex_top_tracing import ibex_pkg::*; #(
     .RndCnstLfsrPerm  ( RndCnstLfsrPerm  ),
     .DmHaltAddr       ( DmHaltAddr       ),
     .DmExceptionAddr  ( DmExceptionAddr  )
-  ) u_ibex_top (
+  ) u_ibex_xif_top (
     .clk_i,
     .rst_ni,
 
@@ -271,8 +271,8 @@ module ibex_top_tracing import ibex_pkg::*; #(
     .core_sleep_o
   );
 
-  ibex_tracer
-  u_ibex_tracer (
+  ibex_xif_tracer
+  u_ibex_xif_tracer (
     .clk_i,
     .rst_ni,
 

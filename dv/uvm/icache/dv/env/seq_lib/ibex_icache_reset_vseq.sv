@@ -4,9 +4,9 @@
 
 // A version of the combination vseq that injects resets at unexpected times.
 
-class ibex_icache_reset_vseq extends ibex_icache_combo_vseq;
+class ibex_xif_icache_reset_vseq extends ibex_xif_icache_combo_vseq;
 
-  `uvm_object_utils(ibex_icache_reset_vseq)
+  `uvm_object_utils(ibex_xif_icache_reset_vseq)
   `uvm_object_new
 
   task pre_do (bit is_item);
@@ -17,4 +17,4 @@ class ibex_icache_reset_vseq extends ibex_icache_combo_vseq;
     random_reset = 1'b1;
   endtask : pre_do
 
-endclass : ibex_icache_reset_vseq
+endclass : ibex_xif_icache_reset_vseq

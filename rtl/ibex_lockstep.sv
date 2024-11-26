@@ -8,7 +8,7 @@
 // LockstepOffset cycles.
 
 // SEC_CM: LOGIC.SHADOW
-module ibex_lockstep import ibex_pkg::*; #(
+module ibex_xif_lockstep import ibex_xif_pkg::*; #(
   parameter int unsigned LockstepOffset    = 2,
   parameter bit          PMPEnable         = 1'b0,
   parameter int unsigned PMPGranularity    = 0,
@@ -97,11 +97,11 @@ module ibex_lockstep import ibex_pkg::*; #(
   input  crash_dump_t                  crash_dump_i,
   input  logic                         double_fault_seen_i,
 
-  input  ibex_mubi_t                   fetch_enable_i,
+  input  ibex_xif_mubi_t                   fetch_enable_i,
   output logic                         alert_minor_o,
   output logic                         alert_major_internal_o,
   output logic                         alert_major_bus_o,
-  input  ibex_mubi_t                   core_busy_i,
+  input  ibex_xif_mubi_t                   core_busy_i,
   input  logic                         test_en_i,
   input  logic                         scan_rst_ni
 );
@@ -184,7 +184,7 @@ module ibex_lockstep import ibex_pkg::*; #(
     logic [14:0]                 irq_fast;
     logic                        irq_nm;
     logic                        debug_req;
-    ibex_mubi_t                  fetch_enable;
+    ibex_xif_mubi_t                  fetch_enable;
     logic                        ic_scr_key_valid;
   } delayed_inputs_t;
 
@@ -265,7 +265,7 @@ module ibex_lockstep import ibex_pkg::*; #(
     logic                        irq_pending;
     crash_dump_t                 crash_dump;
     logic                        double_fault_seen;
-    ibex_mubi_t                  core_busy;
+    ibex_xif_mubi_t                  core_busy;
   } delayed_outputs_t;
 
   delayed_outputs_t [OutputsOffset-1:0]  core_outputs_q;
@@ -315,7 +315,7 @@ module ibex_lockstep import ibex_pkg::*; #(
 
   logic shadow_alert_minor, shadow_alert_major_internal, shadow_alert_major_bus;
 
-  ibex_core #(
+  ibex_xif_core #(
     .PMPEnable         ( PMPEnable         ),
     .PMPGranularity    ( PMPGranularity    ),
     .PMPNumRegions     ( PMPNumRegions     ),

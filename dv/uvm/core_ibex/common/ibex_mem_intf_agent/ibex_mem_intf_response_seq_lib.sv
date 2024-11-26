@@ -3,14 +3,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-// SEQUENCE: ibex_mem_intf_response_seq
+// SEQUENCE: ibex_xif_mem_intf_response_seq
 //------------------------------------------------------------------------------
 
-class ibex_mem_intf_response_seq extends uvm_sequence #(ibex_mem_intf_seq_item);
+class ibex_xif_mem_intf_response_seq extends uvm_sequence #(ibex_xif_mem_intf_seq_item);
 
-  ibex_mem_intf_seq_item item;
+  ibex_xif_mem_intf_seq_item item;
   mem_model              m_mem;
-  ibex_cosim_agent       cosim_agent;
+  ibex_xif_cosim_agent       cosim_agent;
   bit                    enable_intg_error = 1'b0;
   bit                    enable_error = 1'b0;
   // Used to ensure that whenever inject_error() is called, the very next transaction will inject an
@@ -19,16 +19,16 @@ class ibex_mem_intf_response_seq extends uvm_sequence #(ibex_mem_intf_seq_item);
   bit                    is_dmem_seq = 1'b0;
   bit                    suppress_error_on_exc = 1'b0;
 
-  `uvm_object_utils(ibex_mem_intf_response_seq)
-  `uvm_declare_p_sequencer(ibex_mem_intf_response_sequencer)
+  `uvm_object_utils(ibex_xif_mem_intf_response_seq)
+  `uvm_declare_p_sequencer(ibex_xif_mem_intf_response_sequencer)
   `uvm_object_new
 
   virtual task body();
-    virtual core_ibex_dut_probe_if ibex_dut_vif;
+    virtual core_ibex_xif_dut_probe_if ibex_xif_dut_vif;
 
-    if (!uvm_config_db#(virtual core_ibex_dut_probe_if)::get(null, "", "dut_if",
-                                                             ibex_dut_vif)) begin
-      `uvm_fatal(`gfn, "failed to get ibex dut_if from uvm_config_db")
+    if (!uvm_config_db#(virtual core_ibex_xif_dut_probe_if)::get(null, "", "dut_if",
+                                                             ibex_xif_dut_vif)) begin
+      `uvm_fatal(`gfn, "failed to get ibex_xif dut_if from uvm_config_db")
     end
 
     if (m_mem == null) `uvm_fatal(get_full_name(), "Cannot get memory model")
@@ -44,11 +44,11 @@ class ibex_mem_intf_response_seq extends uvm_sequence #(ibex_mem_intf_seq_item);
       p_sequencer.addr_ph_port.get(item);
       aligned_addr = {item.addr[DATA_WIDTH-1:2], 2'b0};
 
-      req = ibex_mem_intf_seq_item::type_id::create("req");
+      req = ibex_xif_mem_intf_seq_item::type_id::create("req");
       error_synch = 1'b0;
 
       if (suppress_error_on_exc &&
-            (ibex_dut_vif.dut_cb.sync_exc_seen || ibex_dut_vif.dut_cb.irq_exc_seen)) begin
+            (ibex_xif_dut_vif.dut_cb.sync_exc_seen || ibex_xif_dut_vif.dut_cb.irq_exc_seen)) begin
         enable_error = 1'b0;
         enable_intg_error = 1'b0;
       end
@@ -187,4 +187,4 @@ class ibex_mem_intf_response_seq extends uvm_sequence #(ibex_mem_intf_seq_item);
     return data;
   endfunction
 
-endclass : ibex_mem_intf_response_seq
+endclass : ibex_xif_mem_intf_response_seq

@@ -9,7 +9,7 @@
 
 `include "prim_assert.sv"
 
-module ibex_cs_registers #(
+module ibex_xif_cs_registers #(
   parameter bit               DbgTriggerEn      = 0,
   parameter int unsigned      DbgHwBreakNum     = 1,
   parameter bit               DataIndTiming     = 1'b0,
@@ -22,8 +22,8 @@ module ibex_cs_registers #(
   parameter int unsigned      PMPGranularity    = 0,
   parameter int unsigned      PMPNumRegions     = 4,
   parameter bit               RV32E             = 0,
-  parameter ibex_pkg::rv32m_e RV32M             = ibex_pkg::RV32MFast,
-  parameter ibex_pkg::rv32b_e RV32B             = ibex_pkg::RV32BNone,
+  parameter ibex_xif_pkg::rv32m_e RV32M             = ibex_xif_pkg::RV32MFast,
+  parameter ibex_xif_pkg::rv32b_e RV32B             = ibex_xif_pkg::RV32BNone,
   parameter int unsigned      ExternalCSRs      = 0
 ) (
   // Clock and Reset
@@ -34,8 +34,8 @@ module ibex_cs_registers #(
   input  logic [31:0]          hart_id_i,
 
   // Privilege mode
-  output ibex_pkg::priv_lvl_e  priv_mode_id_o,
-  output ibex_pkg::priv_lvl_e  priv_mode_lsu_o,
+  output ibex_xif_pkg::priv_lvl_e  priv_mode_id_o,
+  output ibex_xif_pkg::priv_lvl_e  priv_mode_lsu_o,
   output logic                 csr_mstatus_tw_o,
 
   // mtvec
@@ -45,9 +45,9 @@ module ibex_cs_registers #(
 
   // Interface to registers (SRAM like)
   input  logic                 csr_access_i,
-  input  ibex_pkg::csr_num_e   csr_addr_i,
+  input  ibex_xif_pkg::csr_num_e   csr_addr_i,
   input  logic [31:0]          csr_wdata_i,
-  input  ibex_pkg::csr_op_e    csr_op_i,
+  input  ibex_xif_pkg::csr_op_e    csr_op_i,
   input                        csr_op_en_i,
   output logic [31:0]          csr_rdata_o,
 
@@ -64,20 +64,20 @@ module ibex_cs_registers #(
   input  logic [14:0]          irq_fast_i,
   input  logic                 nmi_mode_i,
   output logic                 irq_pending_o,          // interrupt request pending
-  output ibex_pkg::irqs_t      irqs_o,                 // interrupt requests qualified with mie
+  output ibex_xif_pkg::irqs_t      irqs_o,                 // interrupt requests qualified with mie
   output logic                 csr_mstatus_mie_o,
   output logic [31:0]          csr_mepc_o,
   output logic [31:0]          csr_mtval_o,
 
   // PMP
-  output ibex_pkg::pmp_cfg_t     csr_pmp_cfg_o  [PMPNumRegions],
+  output ibex_xif_pkg::pmp_cfg_t     csr_pmp_cfg_o  [PMPNumRegions],
   output logic [33:0]            csr_pmp_addr_o [PMPNumRegions],
-  output ibex_pkg::pmp_mseccfg_t csr_pmp_mseccfg_o,
+  output ibex_xif_pkg::pmp_mseccfg_t csr_pmp_mseccfg_o,
 
   // debug
   input  logic                 debug_mode_i,
   input  logic                 debug_mode_entering_i,
-  input  ibex_pkg::dbg_cause_e debug_cause_i,
+  input  ibex_xif_pkg::dbg_cause_e debug_cause_i,
   input  logic                 debug_csr_save_i,
   output logic [31:0]          csr_depc_o,
   output logic                 debug_single_step_o,
@@ -106,7 +106,7 @@ module ibex_cs_registers #(
   input  logic                 csr_restore_mret_i,
   input  logic                 csr_restore_dret_i,
   input  logic                 csr_save_cause_i,
-  input  ibex_pkg::exc_cause_t csr_mcause_i,
+  input  ibex_xif_pkg::exc_cause_t csr_mcause_i,
   input  logic [31:0]          csr_mtval_i,
   output logic                 illegal_csr_insn_o,     // access to non-existent CSR,
                                                         // with wrong priviledge level, or
@@ -128,11 +128,11 @@ module ibex_cs_registers #(
   input  logic                 div_wait_i                   // core waiting for divide
 );
 
-  import ibex_pkg::*;
+  import ibex_xif_pkg::*;
 
   // Is a PMP config a locked one that allows M-mode execution when MSECCFG.MML is set (either
   // M mode alone or shared M/U mode execution)?
-  function automatic logic is_mml_m_exec_cfg(ibex_pkg::pmp_cfg_t pmp_cfg);
+  function automatic logic is_mml_m_exec_cfg(ibex_xif_pkg::pmp_cfg_t pmp_cfg);
     logic unused_cfg = ^{pmp_cfg.mode};
     logic value = 1'b0;
 
@@ -884,7 +884,7 @@ module ibex_cs_registers #(
                                           mpp:  PRIV_LVL_U,
                                           mprv: 1'b0,
                                           tw:   1'b0};
-  ibex_csr #(
+  ibex_xif_csr #(
     .Width     ($bits(status_t)),
     .ShadowCopy(ShadowCSR),
     .ResetValue({MSTATUS_RST_VAL})
@@ -898,7 +898,7 @@ module ibex_cs_registers #(
   );
 
   // MEPC
-  ibex_csr #(
+  ibex_xif_csr #(
     .Width     (32),
     .ShadowCopy(1'b0),
     .ResetValue('0)
@@ -916,7 +916,7 @@ module ibex_cs_registers #(
   assign mie_d.irq_timer    = csr_wdata_int[CSR_MTIX_BIT];
   assign mie_d.irq_external = csr_wdata_int[CSR_MEIX_BIT];
   assign mie_d.irq_fast     = csr_wdata_int[CSR_MFIX_BIT_HIGH:CSR_MFIX_BIT_LOW];
-  ibex_csr #(
+  ibex_xif_csr #(
     .Width     ($bits(irqs_t)),
     .ShadowCopy(1'b0),
     .ResetValue('0)
@@ -930,7 +930,7 @@ module ibex_cs_registers #(
   );
 
   // MSCRATCH
-  ibex_csr #(
+  ibex_xif_csr #(
     .Width     (32),
     .ShadowCopy(1'b0),
     .ResetValue('0)
@@ -944,7 +944,7 @@ module ibex_cs_registers #(
   );
 
   // MCAUSE
-  ibex_csr #(
+  ibex_xif_csr #(
     .Width     ($bits(exc_cause_t)),
     .ShadowCopy(1'b0),
     .ResetValue('0)
@@ -958,7 +958,7 @@ module ibex_cs_registers #(
   );
 
   // MTVAL
-  ibex_csr #(
+  ibex_xif_csr #(
     .Width     (32),
     .ShadowCopy(1'b0),
     .ResetValue('0)
@@ -972,7 +972,7 @@ module ibex_cs_registers #(
   );
 
   // MTVEC
-  ibex_csr #(
+  ibex_xif_csr #(
     .Width     (32),
     .ShadowCopy(ShadowCSR),
     .ResetValue(32'd1)
@@ -992,7 +992,7 @@ module ibex_cs_registers #(
       prv: PRIV_LVL_M,
       default: '0
   };
-  ibex_csr #(
+  ibex_xif_csr #(
     .Width     ($bits(dcsr_t)),
     .ShadowCopy(1'b0),
     .ResetValue({DCSR_RESET_VAL})
@@ -1006,7 +1006,7 @@ module ibex_cs_registers #(
   );
 
   // DEPC
-  ibex_csr #(
+  ibex_xif_csr #(
     .Width     (32),
     .ShadowCopy(1'b0),
     .ResetValue('0)
@@ -1020,7 +1020,7 @@ module ibex_cs_registers #(
   );
 
   // DSCRATCH0
-  ibex_csr #(
+  ibex_xif_csr #(
     .Width     (32),
     .ShadowCopy(1'b0),
     .ResetValue('0)
@@ -1034,7 +1034,7 @@ module ibex_cs_registers #(
   );
 
   // DSCRATCH1
-  ibex_csr #(
+  ibex_xif_csr #(
     .Width     (32),
     .ShadowCopy(1'b0),
     .ResetValue('0)
@@ -1049,7 +1049,7 @@ module ibex_cs_registers #(
 
   // MSTACK
   localparam status_stk_t MSTACK_RESET_VAL = '{mpie: 1'b1, mpp: PRIV_LVL_U};
-  ibex_csr #(
+  ibex_xif_csr #(
     .Width     ($bits(status_stk_t)),
     .ShadowCopy(1'b0),
     .ResetValue({MSTACK_RESET_VAL})
@@ -1063,7 +1063,7 @@ module ibex_cs_registers #(
   );
 
   // MSTACK_EPC
-  ibex_csr #(
+  ibex_xif_csr #(
     .Width     (32),
     .ShadowCopy(1'b0),
     .ResetValue('0)
@@ -1077,7 +1077,7 @@ module ibex_cs_registers #(
   );
 
   // MSTACK_CAUSE
-  ibex_csr #(
+  ibex_xif_csr #(
     .Width     ($bits(exc_cause_t)),
     .ShadowCopy(1'b0),
     .ResetValue('0)
@@ -1097,9 +1097,9 @@ module ibex_cs_registers #(
   if (PMPEnable) begin : g_pmp_registers
     // PMP reset values
     `ifdef IBEX_CUSTOM_PMP_RESET_VALUES
-      `include "ibex_pmp_reset.svh"
+      `include "ibex_xif_pmp_reset.svh"
     `else
-      `include "ibex_pmp_reset_default.svh"
+      `include "ibex_xif_pmp_reset_default.svh"
     `endif
 
     pmp_mseccfg_t                pmp_mseccfg_q, pmp_mseccfg_d;
@@ -1187,7 +1187,7 @@ module ibex_cs_registers #(
                                                           &csr_wdata_int[(i%4)*PMP_CFG_W+:2];
       assign pmp_cfg_wdata[i].read  = csr_wdata_int[(i%4)*PMP_CFG_W];
 
-      ibex_csr #(
+      ibex_xif_csr #(
         .Width     ($bits(pmp_cfg_t)),
         .ShadowCopy(ShadowCSR),
         .ResetValue(pmp_cfg_rst[i])
@@ -1222,7 +1222,7 @@ module ibex_cs_registers #(
                                 (csr_addr == (CSR_OFF_PMP_ADDR + i[11:0]));
       end
 
-      ibex_csr #(
+      ibex_xif_csr #(
         .Width     (PMPAddrWidth),
         .ShadowCopy(ShadowCSR),
         .ResetValue(pmp_addr_rst[i][33-:PMPAddrWidth])
@@ -1255,7 +1255,7 @@ module ibex_cs_registers #(
     // MSECCFG.RLB cannot be set again
     assign pmp_mseccfg_d.rlb = any_pmp_entry_locked ? 1'b0 : csr_wdata_int[CSR_MSECCFG_RLB_BIT];
 
-    ibex_csr #(
+    ibex_xif_csr #(
       .Width     ($bits(pmp_mseccfg_t)),
       .ShadowCopy(ShadowCSR),
       .ResetValue(pmp_mseccfg_rst)
@@ -1310,7 +1310,7 @@ module ibex_cs_registers #(
     end
 
     // When adding or altering performance counter meanings and default
-    // mappings please update dv/verilator/pcount/cpp/ibex_pcounts.cc
+    // mappings please update dv/verilator/pcount/cpp/ibex_xif_pcounts.cc
     // appropriately.
     //
     // active counters
@@ -1349,7 +1349,7 @@ module ibex_cs_registers #(
   end
 
   // mcycle
-  ibex_counter #(
+  ibex_xif_counter #(
     .CounterWidth(64)
   ) mcycle_counter_i (
     .clk_i(clk_i),
@@ -1364,7 +1364,7 @@ module ibex_cs_registers #(
 
 
   // minstret
-  ibex_counter #(
+  ibex_xif_counter #(
     .CounterWidth(64),
     .ProvideValUpd(1)
   ) minstret_counter_i (
@@ -1400,7 +1400,7 @@ module ibex_cs_registers #(
     if (i < MHPMCounterNum) begin : gen_imp
       logic [63:0] mhpmcounter_raw, mhpmcounter_next;
 
-      ibex_counter #(
+      ibex_xif_counter #(
         .CounterWidth(MHPMCounterWidth),
         .ProvideValUpd(Cnt == 10)
       ) mcounters_variable_i (
@@ -1501,7 +1501,7 @@ module ibex_cs_registers #(
     assign tmatch_value_d   = csr_wdata_int[31:0];
 
     // Registers
-    ibex_csr #(
+    ibex_xif_csr #(
       .Width     (DbgHwNumLen),
       .ShadowCopy(1'b0),
       .ResetValue('0)
@@ -1515,7 +1515,7 @@ module ibex_cs_registers #(
     );
 
     for (genvar i = 0; i < DbgHwBreakNum; i++) begin : g_dbg_tmatch_reg
-      ibex_csr #(
+      ibex_xif_csr #(
         .Width     (1),
         .ShadowCopy(1'b0),
         .ResetValue('0)
@@ -1528,7 +1528,7 @@ module ibex_cs_registers #(
         .rd_error_o()
       );
 
-      ibex_csr #(
+      ibex_xif_csr #(
         .Width     (32),
         .ShadowCopy(1'b0),
         .ResetValue('0)
@@ -1646,7 +1646,7 @@ module ibex_cs_registers #(
   if (ICache) begin : gen_icache_enable
     assign cpuctrlsts_part_wdata.icache_enable = cpuctrlsts_part_wdata_raw.icache_enable;
 
-    ibex_csr #(
+    ibex_xif_csr #(
       .Width     (1),
       .ShadowCopy(ShadowCSR),
       .ResetValue(1'b0)
@@ -1681,7 +1681,7 @@ module ibex_cs_registers #(
   assign icache_enable_o =
     cpuctrlsts_part_q.icache_enable & ~(debug_mode_i | debug_mode_entering_i);
 
-  ibex_csr #(
+  ibex_xif_csr #(
     .Width     ($bits(cpu_ctrl_sts_part_t)),
     .ShadowCopy(ShadowCSR),
     .ResetValue('0)

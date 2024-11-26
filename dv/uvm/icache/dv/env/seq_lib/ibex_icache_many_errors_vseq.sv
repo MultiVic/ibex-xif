@@ -2,9 +2,9 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
-class ibex_icache_many_errors_vseq extends ibex_icache_base_vseq;
+class ibex_xif_icache_many_errors_vseq extends ibex_xif_icache_base_vseq;
 
-  `uvm_object_utils(ibex_icache_many_errors_vseq)
+  `uvm_object_utils(ibex_xif_icache_many_errors_vseq)
 
   function new (string name="");
     super.new(name);
@@ -24,4 +24,4 @@ class ibex_icache_many_errors_vseq extends ibex_icache_base_vseq;
 
   endtask : pre_start
 
-endclass : ibex_icache_many_errors_vseq
+endclass : ibex_xif_icache_many_errors_vseq

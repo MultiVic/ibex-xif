@@ -3,17 +3,17 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // CSR test class
-class core_ibex_csr_test extends core_ibex_base_test;
+class core_ibex_xif_csr_test extends core_ibex_xif_base_test;
 
-  `uvm_component_utils(core_ibex_csr_test)
+  `uvm_component_utils(core_ibex_xif_csr_test)
   `uvm_component_new
 
 endclass
 
 // Test that corrupts the PC and checks that an appropriate alert occurs.
-class core_ibex_pc_intg_test extends core_ibex_base_test;
+class core_ibex_xif_pc_intg_test extends core_ibex_xif_base_test;
 
-  `uvm_component_utils(core_ibex_pc_intg_test)
+  `uvm_component_utils(core_ibex_xif_pc_intg_test)
   `uvm_component_new
 
   uvm_report_server rs;
@@ -29,7 +29,7 @@ class core_ibex_pc_intg_test extends core_ibex_base_test;
     clk_vif.wait_n_clks($urandom_range(2000));
 
     // Set path to the core and the PC to be glitched.
-    core_path = "core_ibex_tb_top.dut.u_ibex_top.u_ibex_core";
+    core_path = "core_ibex_xif_tb_top.dut.u_ibex_xif_top.u_ibex_xif_core";
     if_stage_path = $sformatf("%s.if_stage_i", core_path);
     glitch_path = $sformatf("%s.pc_if_o", if_stage_path);
 
@@ -89,20 +89,20 @@ class core_ibex_pc_intg_test extends core_ibex_base_test;
 endclass
 
 // Test that corrupts data read from the register file and checks that an appropriate alert occurs.
-class core_ibex_rf_intg_test extends core_ibex_base_test;
+class core_ibex_xif_rf_intg_test extends core_ibex_xif_base_test;
 
-  `uvm_component_utils(core_ibex_rf_intg_test)
+  `uvm_component_utils(core_ibex_xif_rf_intg_test)
   `uvm_component_new
 
   uvm_report_server rs;
 
   int unsigned reg_file_data_width;
 
-  string ibex_top_path = "core_ibex_tb_top.dut.u_ibex_top";
+  string ibex_xif_top_path = "core_ibex_xif_tb_top.dut.u_ibex_xif_top";
 
   function automatic uvm_hdl_data_t read_data(string subpath);
     uvm_hdl_data_t result;
-    string path = $sformatf("%s.%s", ibex_top_path, subpath);
+    string path = $sformatf("%s.%s", ibex_xif_top_path, subpath);
     `DV_CHECK_FATAL(uvm_hdl_read(path, result))
     return result;
   endfunction
@@ -112,12 +112,12 @@ class core_ibex_rf_intg_test extends core_ibex_base_test;
   endfunction
 
   function automatic void force_data(string subpath, uvm_hdl_data_t value);
-    string path = $sformatf("%s.%s", ibex_top_path, subpath);
+    string path = $sformatf("%s.%s", ibex_xif_top_path, subpath);
     `DV_CHECK_FATAL(uvm_hdl_force(path, value))
   endfunction
 
   function automatic void release_force(string subpath);
-    string path = $sformatf("%s.%s", ibex_top_path, subpath);
+    string path = $sformatf("%s.%s", ibex_xif_top_path, subpath);
     `DV_CHECK_FATAL(uvm_hdl_release(path))
   endfunction
 
@@ -174,7 +174,7 @@ class core_ibex_rf_intg_test extends core_ibex_base_test;
       force_data(port_name, data);
 
       // Determine whether an alert is expected: if the instruction is valid.
-      exp_alert = read_data("u_ibex_core.instr_valid_id");
+      exp_alert = read_data("u_ibex_xif_core.instr_valid_id");
 
       // Schedule a simulation step so the DUT can react.
       #1step;
@@ -200,12 +200,12 @@ class core_ibex_rf_intg_test extends core_ibex_base_test;
 endclass
 
 // Test that corrupts the instruction cache and checks that an appropriate alert occurs.
-class core_ibex_icache_intg_test extends core_ibex_base_test;
+class core_ibex_xif_icache_intg_test extends core_ibex_xif_base_test;
 
-  `uvm_component_utils(core_ibex_icache_intg_test)
+  `uvm_component_utils(core_ibex_xif_icache_intg_test)
   `uvm_component_new
 
-  string ibex_top_path = "core_ibex_tb_top.dut.u_ibex_top";
+  string ibex_xif_top_path = "core_ibex_xif_tb_top.dut.u_ibex_xif_top";
 
   int unsigned num_ways, num_entries, tag_size, line_size;
 
@@ -214,25 +214,25 @@ class core_ibex_icache_intg_test extends core_ibex_base_test;
 
   function automatic int unsigned read_uint(string subpath);
     int unsigned result;
-    string path = $sformatf("%s.%s", ibex_top_path, subpath);
+    string path = $sformatf("%s.%s", ibex_xif_top_path, subpath);
     `DV_CHECK_FATAL(uvm_hdl_read(path, result))
     return result;
   endfunction
 
   function automatic uvm_hdl_data_t read_data(string subpath);
     uvm_hdl_data_t result;
-    string path = $sformatf("%s.%s", ibex_top_path, subpath);
+    string path = $sformatf("%s.%s", ibex_xif_top_path, subpath);
     `DV_CHECK_FATAL(uvm_hdl_read(path, result))
     return result;
   endfunction
 
   function automatic void force_data(string subpath, uvm_hdl_data_t value);
-    string path = $sformatf("%s.%s", ibex_top_path, subpath);
+    string path = $sformatf("%s.%s", ibex_xif_top_path, subpath);
     `DV_CHECK_FATAL(uvm_hdl_force(path, value))
   endfunction
 
   function automatic void release_force(string subpath);
-    string path = $sformatf("%s.%s", ibex_top_path, subpath);
+    string path = $sformatf("%s.%s", ibex_xif_top_path, subpath);
     `DV_CHECK_FATAL(uvm_hdl_release(path))
   endfunction
 
@@ -240,8 +240,8 @@ class core_ibex_icache_intg_test extends core_ibex_base_test;
     super.build_phase(phase);
 
     // Obtain value of parameters defining shape of cache.
-    num_ways = ibex_pkg::IC_NUM_WAYS;
-    num_entries = 1 << ibex_pkg::IC_INDEX_W;
+    num_ways = ibex_xif_pkg::IC_NUM_WAYS;
+    num_entries = 1 << ibex_xif_pkg::IC_INDEX_W;
     tag_size = read_uint("TagSizeECC");
     line_size = read_uint("LineSizeECC");
 
@@ -353,9 +353,9 @@ class core_ibex_icache_intg_test extends core_ibex_base_test;
 
           // Decide if an error is expected: if the lookup is valid and the tag hit.
           lookup_valid = read_data($sformatf(
-              "u_ibex_core.if_stage_i.gen_icache.icache_i.lookup_valid_ic1"));
+              "u_ibex_xif_core.if_stage_i.gen_icache.icache_i.lookup_valid_ic1"));
           tag_hit = read_data($sformatf(
-              "u_ibex_core.if_stage_i.gen_icache.icache_i.tag_hit_ic1"));
+              "u_ibex_xif_core.if_stage_i.gen_icache.icache_i.tag_hit_ic1"));
           exp_alert_minor = lookup_valid & tag_hit;
           `DV_CHECK_FATAL(!$isunknown(exp_alert_minor))
 
@@ -431,7 +431,7 @@ class core_ibex_icache_intg_test extends core_ibex_base_test;
 
           // Decide if an error is expected: if the lookup is valid.
           lookup_valid = read_data($sformatf(
-              "u_ibex_core.if_stage_i.gen_icache.icache_i.lookup_valid_ic1"));
+              "u_ibex_xif_core.if_stage_i.gen_icache.icache_i.lookup_valid_ic1"));
           `DV_CHECK_FATAL(!$isunknown(lookup_valid))
 
           // Check that the minor alert matches the expectation.
@@ -469,9 +469,9 @@ class core_ibex_icache_intg_test extends core_ibex_base_test;
 endclass
 
 // Reset test
-class core_ibex_reset_test extends core_ibex_base_test;
+class core_ibex_xif_reset_test extends core_ibex_xif_base_test;
 
-  `uvm_component_utils(core_ibex_reset_test)
+  `uvm_component_utils(core_ibex_xif_reset_test)
   `uvm_component_new
 
   bit [5:0] num_reset;
@@ -483,18 +483,18 @@ class core_ibex_reset_test extends core_ibex_base_test;
       // Mid-test reset is possible in a wide range of times
       clk_vif.wait_clks($urandom_range(0, 50000));
 
-      dut_vif.dut_cb.fetch_enable <= ibex_pkg::IbexMuBiOff;
+      dut_vif.dut_cb.fetch_enable <= ibex_xif_pkg::IbexMuBiOff;
       clk_vif.apply_reset(.reset_width_clks (100));
-      dut_vif.dut_cb.fetch_enable <= ibex_pkg::IbexMuBiOn;
+      dut_vif.dut_cb.fetch_enable <= ibex_xif_pkg::IbexMuBiOn;
     end
   endtask
 
 endclass
 
 // Performance counter test class
-class core_ibex_perf_test extends core_ibex_base_test;
+class core_ibex_xif_perf_test extends core_ibex_xif_base_test;
 
-  `uvm_component_utils(core_ibex_perf_test)
+  `uvm_component_utils(core_ibex_xif_perf_test)
   `uvm_component_new
 
   virtual task check_perf_stats();
@@ -555,22 +555,22 @@ class core_ibex_perf_test extends core_ibex_base_test;
 endclass
 
 // Debug test class
-class core_ibex_debug_intr_basic_test extends core_ibex_base_test;
+class core_ibex_xif_debug_intr_basic_test extends core_ibex_xif_base_test;
 
-  `uvm_component_utils(core_ibex_debug_intr_basic_test)
+  `uvm_component_utils(core_ibex_xif_debug_intr_basic_test)
   `uvm_component_new
 
-  bit [ibex_mem_intf_agent_pkg::DATA_WIDTH-1:0] core_init_mstatus;
-  bit [ibex_mem_intf_agent_pkg::DATA_WIDTH-1:0] core_init_mie;
+  bit [ibex_xif_mem_intf_agent_pkg::DATA_WIDTH-1:0] core_init_mstatus;
+  bit [ibex_xif_mem_intf_agent_pkg::DATA_WIDTH-1:0] core_init_mie;
   priv_lvl_e                                    init_operating_mode;
   priv_lvl_e                                    operating_mode;
   bit [$clog2(irq_agent_pkg::DATA_WIDTH)-1:0]   irq_id;
   irq_seq_item                                  irq_txn;
   bit [irq_agent_pkg::DATA_WIDTH-1:0]           irq;
-  bit [ibex_mem_intf_agent_pkg::DATA_WIDTH-1:0] mstatus;
-  bit [ibex_mem_intf_agent_pkg::DATA_WIDTH-1:0] mcause;
-  bit [ibex_mem_intf_agent_pkg::DATA_WIDTH-1:0] mip;
-  bit [ibex_mem_intf_agent_pkg::DATA_WIDTH-1:0] mie;
+  bit [ibex_xif_mem_intf_agent_pkg::DATA_WIDTH-1:0] mstatus;
+  bit [ibex_xif_mem_intf_agent_pkg::DATA_WIDTH-1:0] mcause;
+  bit [ibex_xif_mem_intf_agent_pkg::DATA_WIDTH-1:0] mip;
+  bit [ibex_xif_mem_intf_agent_pkg::DATA_WIDTH-1:0] mie;
   bit                                           in_nested_trap;
 
   virtual task send_stimulus();
@@ -612,7 +612,7 @@ class core_ibex_debug_intr_basic_test extends core_ibex_base_test;
   virtual task wait_for_core_setup();
     wait_for_csr_write(CSR_MSTATUS, 10000);
     core_init_mstatus = signature_data;
-    // capture the initial privilege mode ibex will boot into
+    // capture the initial privilege mode ibex_xif will boot into
     init_operating_mode = priv_lvl_e'(core_init_mstatus[12:11]);
     wait_for_csr_write(CSR_MIE, 5000);
     core_init_mie = signature_data;
@@ -650,7 +650,7 @@ class core_ibex_debug_intr_basic_test extends core_ibex_base_test;
   virtual task send_irq_stimulus_inner(output bit ret_val);
     bit irq_valid;
     irq_collected_port.get(irq_txn);
-    // Get the bit position of the highest priority interrupt - ibex will only handle this one if
+    // Get the bit position of the highest priority interrupt - ibex_xif will only handle this one if
     // there are multiple irqs asserted at once.
     irq_valid = determine_irq_from_txn();
     // If the interrupt is maskable, and the corresponding bit in MIE is not set, skip the next
@@ -685,7 +685,7 @@ class core_ibex_debug_intr_basic_test extends core_ibex_base_test;
     `DV_CHECK_EQ_FATAL(mstatus[3], 1'b0, "mstatus.mie was not set to 1'b0 after entering handler")
     // check mcause against the interrupt id
     check_mcause(1'b1, irq_id);
-    // Wait for MIE and MIP to be written regardless of what interrupt ibex is dealing with, to
+    // Wait for MIE and MIP to be written regardless of what interrupt ibex_xif is dealing with, to
     // prevent the case where MIP/MIE stays at 0 due to a nonmaskable interrupt, which will falsely
     // trigger the following call of check_next_core_status()
     wait_for_csr_write(CSR_MIE, 5000);
@@ -771,14 +771,14 @@ class core_ibex_debug_intr_basic_test extends core_ibex_base_test;
     return have_irq;
   endfunction
 
-  virtual task check_mcause(bit irq_or_exc, bit[ibex_mem_intf_agent_pkg::DATA_WIDTH-2:0] cause);
-    bit[ibex_mem_intf_agent_pkg::DATA_WIDTH-1:0] mcause;
+  virtual task check_mcause(bit irq_or_exc, bit[ibex_xif_mem_intf_agent_pkg::DATA_WIDTH-2:0] cause);
+    bit[ibex_xif_mem_intf_agent_pkg::DATA_WIDTH-1:0] mcause;
     wait_for_csr_write(CSR_MCAUSE, 10000);
     mcause = signature_data;
     `uvm_info(`gfn, $sformatf("mcause: 0x%0x", mcause), UVM_LOW)
-    `DV_CHECK_EQ_FATAL(mcause[ibex_mem_intf_agent_pkg::DATA_WIDTH-1], irq_or_exc,
+    `DV_CHECK_EQ_FATAL(mcause[ibex_xif_mem_intf_agent_pkg::DATA_WIDTH-1], irq_or_exc,
                         $sformatf("mcause.interrupt is not set to 0x%0x", irq_or_exc))
-    `DV_CHECK_EQ_FATAL(mcause[ibex_mem_intf_agent_pkg::DATA_WIDTH-2:0], cause,
+    `DV_CHECK_EQ_FATAL(mcause[ibex_xif_mem_intf_agent_pkg::DATA_WIDTH-2:0], cause,
                        "mcause.exception_code is encoding the wrong exception type")
   endtask
 
@@ -846,9 +846,9 @@ class core_ibex_debug_intr_basic_test extends core_ibex_base_test;
 endclass
 
 // Base class for directed debug and irq test scenarios
-class core_ibex_directed_test extends core_ibex_debug_intr_basic_test;
+class core_ibex_xif_directed_test extends core_ibex_xif_debug_intr_basic_test;
 
-  `uvm_component_utils(core_ibex_directed_test)
+  `uvm_component_utils(core_ibex_xif_directed_test)
   `uvm_component_new
 
   instr_t     seen_instr[$];
@@ -966,14 +966,14 @@ class core_ibex_directed_test extends core_ibex_debug_intr_basic_test;
   // currently in the ID stage against the global seen_instr[$] queue.
   // If we've seen the same type of instruction before, return 0, otherwise add it to the
   // seen_instr[$] queue and return 1.
-  virtual function bit decode_instr(bit [ibex_mem_intf_agent_pkg::DATA_WIDTH-1:0] instr);
-    ibex_pkg::opcode_e                            opcode;
+  virtual function bit decode_instr(bit [ibex_xif_mem_intf_agent_pkg::DATA_WIDTH-1:0] instr);
+    ibex_xif_pkg::opcode_e                            opcode;
     bit [2:0]                                     funct3;
     bit [6:0]                                     funct7;
     bit [12:0]                                    system_imm;
     instr_t                                       instr_fields;
 
-    opcode      = ibex_pkg::opcode_e'(instr[6:0]);
+    opcode      = ibex_xif_pkg::opcode_e'(instr[6:0]);
     funct3      = instr[14:12];
     funct7      = instr[31:25];
     system_imm  = instr[31:20];
@@ -1138,9 +1138,9 @@ endclass
 // A directed interrupt test that sends interrupt stimulus into the core
 // after seeing every unique (and supported) RISC-V instruction in the core's
 // Instruction Decode stage.
-class core_ibex_interrupt_instr_test extends core_ibex_directed_test;
+class core_ibex_xif_interrupt_instr_test extends core_ibex_xif_directed_test;
 
-  `uvm_component_utils(core_ibex_interrupt_instr_test)
+  `uvm_component_utils(core_ibex_xif_interrupt_instr_test)
   `uvm_component_new
 
   virtual task check_stimulus();
@@ -1175,9 +1175,9 @@ class core_ibex_interrupt_instr_test extends core_ibex_directed_test;
 endclass
 
 // Interrupt WFI test class
-class core_ibex_irq_wfi_test extends core_ibex_directed_test;
+class core_ibex_xif_irq_wfi_test extends core_ibex_xif_directed_test;
 
-  `uvm_component_utils(core_ibex_irq_wfi_test)
+  `uvm_component_utils(core_ibex_xif_irq_wfi_test)
   `uvm_component_new
 
   virtual task check_stimulus();
@@ -1190,9 +1190,9 @@ class core_ibex_irq_wfi_test extends core_ibex_directed_test;
 endclass
 
 // Interrupt CSR test class
-class core_ibex_irq_csr_test extends core_ibex_directed_test;
+class core_ibex_xif_irq_csr_test extends core_ibex_xif_directed_test;
 
-  `uvm_component_utils(core_ibex_irq_csr_test)
+  `uvm_component_utils(core_ibex_xif_irq_csr_test)
   `uvm_component_new
 
   virtual task check_stimulus();
@@ -1214,9 +1214,9 @@ class core_ibex_irq_csr_test extends core_ibex_directed_test;
 endclass
 
 // Tests irqs asserted in debug mode
-class core_ibex_irq_in_debug_test extends core_ibex_directed_test;
+class core_ibex_xif_irq_in_debug_test extends core_ibex_xif_directed_test;
 
-  `uvm_component_utils(core_ibex_irq_in_debug_test)
+  `uvm_component_utils(core_ibex_xif_irq_in_debug_test)
   `uvm_component_new
 
   virtual task check_stimulus();
@@ -1311,9 +1311,9 @@ class core_ibex_irq_in_debug_test extends core_ibex_directed_test;
 endclass
 
 // Tests debug mode asserted during irq handler
-class core_ibex_debug_in_irq_test extends core_ibex_directed_test;
+class core_ibex_xif_debug_in_irq_test extends core_ibex_xif_directed_test;
 
-  `uvm_component_utils(core_ibex_debug_in_irq_test)
+  `uvm_component_utils(core_ibex_xif_debug_in_irq_test)
   `uvm_component_new
 
   virtual task check_stimulus();
@@ -1342,9 +1342,9 @@ class core_ibex_debug_in_irq_test extends core_ibex_directed_test;
 endclass
 
 // Nested interrupt test class (with multiple interrupts)
-class core_ibex_nested_irq_test extends core_ibex_directed_test;
+class core_ibex_xif_nested_irq_test extends core_ibex_xif_directed_test;
 
-  `uvm_component_utils(core_ibex_nested_irq_test)
+  `uvm_component_utils(core_ibex_xif_nested_irq_test)
   `uvm_component_new
 
   virtual task check_stimulus();
@@ -1376,9 +1376,9 @@ endclass
 // A directed debug test that sends debug stimulus into the core
 // after seeing every unique (and supported) RISC-V instruction in the core's
 // Instruction Decode stage.
-class core_ibex_debug_instr_test extends core_ibex_directed_test;
+class core_ibex_xif_debug_instr_test extends core_ibex_xif_directed_test;
 
-  `uvm_component_utils(core_ibex_debug_instr_test)
+  `uvm_component_utils(core_ibex_xif_debug_instr_test)
   `uvm_component_new
 
   virtual task check_stimulus();
@@ -1416,9 +1416,9 @@ class core_ibex_debug_instr_test extends core_ibex_directed_test;
 endclass
 
 // Debug WFI test class
-class core_ibex_debug_wfi_test extends core_ibex_directed_test;
+class core_ibex_xif_debug_wfi_test extends core_ibex_xif_directed_test;
 
-  `uvm_component_utils(core_ibex_debug_wfi_test)
+  `uvm_component_utils(core_ibex_xif_debug_wfi_test)
   `uvm_component_new
 
   virtual task check_stimulus();
@@ -1433,9 +1433,9 @@ class core_ibex_debug_wfi_test extends core_ibex_directed_test;
 endclass
 
 // Debug CSR entry test
-class core_ibex_debug_csr_test extends core_ibex_directed_test;
+class core_ibex_xif_debug_csr_test extends core_ibex_xif_directed_test;
 
-  `uvm_component_utils(core_ibex_debug_csr_test)
+  `uvm_component_utils(core_ibex_xif_debug_csr_test)
   `uvm_component_new
 
   virtual task check_stimulus();
@@ -1455,9 +1455,9 @@ class core_ibex_debug_csr_test extends core_ibex_directed_test;
 endclass
 
 // DRET test class
-class core_ibex_dret_test extends core_ibex_directed_test;
+class core_ibex_xif_dret_test extends core_ibex_xif_directed_test;
 
-  `uvm_component_utils(core_ibex_dret_test)
+  `uvm_component_utils(core_ibex_xif_dret_test)
   `uvm_component_new
 
   virtual task check_stimulus();
@@ -1470,13 +1470,13 @@ class core_ibex_dret_test extends core_ibex_directed_test;
 endclass
 
 // Normal debug ebreak test class
-class core_ibex_debug_ebreak_test extends core_ibex_directed_test;
+class core_ibex_xif_debug_ebreak_test extends core_ibex_xif_directed_test;
 
-  `uvm_component_utils(core_ibex_debug_ebreak_test)
+  `uvm_component_utils(core_ibex_xif_debug_ebreak_test)
   `uvm_component_new
 
-  bit[ibex_mem_intf_agent_pkg::DATA_WIDTH-1:0] dpc;
-  bit[ibex_mem_intf_agent_pkg::DATA_WIDTH-1:0] dcsr;
+  bit[ibex_xif_mem_intf_agent_pkg::DATA_WIDTH-1:0] dpc;
+  bit[ibex_xif_mem_intf_agent_pkg::DATA_WIDTH-1:0] dcsr;
 
   virtual task check_stimulus();
     forever begin
@@ -1508,9 +1508,9 @@ class core_ibex_debug_ebreak_test extends core_ibex_directed_test;
 endclass
 
 // Debug ebreak test with dcsr.ebreak(m/s/u) set
-class core_ibex_debug_ebreakmu_test extends core_ibex_directed_test;
+class core_ibex_xif_debug_ebreakmu_test extends core_ibex_xif_directed_test;
 
-  `uvm_component_utils(core_ibex_debug_ebreakmu_test)
+  `uvm_component_utils(core_ibex_xif_debug_ebreakmu_test)
   `uvm_component_new
 
   bit seen_ebreak;
@@ -1523,7 +1523,7 @@ class core_ibex_debug_ebreakmu_test extends core_ibex_directed_test;
         seen_ebreak = 1;
       end
       begin : run_stimulus
-        core_ibex_directed_test::send_stimulus();
+        core_ibex_xif_directed_test::send_stimulus();
       end
     join
   endtask
@@ -1548,7 +1548,7 @@ class core_ibex_debug_ebreakmu_test extends core_ibex_directed_test;
         begin : detect_ebreak
           wait (seen_ebreak == 1);
           `uvm_fatal(`gfn, {"EBreak seen whilst doing initial debug initialization, KNOWN FAILURE ",
-            "SEE https://github.com/lowRISC/ibex/issues/1313"})
+            "SEE https://github.com/lowRISC/ibex_xif/issues/1313"})
         end
       join_any
       disable fork;
@@ -1571,9 +1571,9 @@ class core_ibex_debug_ebreakmu_test extends core_ibex_directed_test;
 endclass
 
 // Debug single step test
-class core_ibex_debug_single_step_test extends core_ibex_directed_test;
+class core_ibex_xif_debug_single_step_test extends core_ibex_xif_directed_test;
 
-  `uvm_component_utils(core_ibex_debug_single_step_test)
+  `uvm_component_utils(core_ibex_xif_debug_single_step_test)
   `uvm_component_new
 
   uvm_event e1;
@@ -1613,9 +1613,9 @@ class core_ibex_debug_single_step_test extends core_ibex_directed_test;
 endclass
 
 
-class core_ibex_single_debug_pulse_test extends core_ibex_directed_test;
+class core_ibex_xif_single_debug_pulse_test extends core_ibex_xif_directed_test;
 
-  `uvm_component_utils(core_ibex_single_debug_pulse_test)
+  `uvm_component_utils(core_ibex_xif_single_debug_pulse_test)
   `uvm_component_new
 
     virtual task check_stimulus();
@@ -1628,9 +1628,9 @@ class core_ibex_single_debug_pulse_test extends core_ibex_directed_test;
 endclass
 
 // Memory interface error test class
-class core_ibex_mem_error_test extends core_ibex_directed_test;
+class core_ibex_xif_mem_error_test extends core_ibex_xif_directed_test;
 
-  `uvm_component_utils(core_ibex_mem_error_test)
+  `uvm_component_utils(core_ibex_xif_mem_error_test)
   `uvm_component_new
 
   int illegal_instruction_threshold = 20;
@@ -1640,7 +1640,7 @@ class core_ibex_mem_error_test extends core_ibex_directed_test;
     memory_error_seq memory_error_seq_h;
     memory_error_seq_h = memory_error_seq::type_id::create("memory_error_seq_h", this);
 
-    `uvm_info(`gfn, "Running core_ibex_mem_error_test", UVM_LOW)
+    `uvm_info(`gfn, "Running core_ibex_xif_mem_error_test", UVM_LOW)
     memory_error_seq_h.vseq = vseq;
     memory_error_seq_h.iteration_modes = InfiniteRuns;
     memory_error_seq_h.stimulus_delay_cycles_min = 800; // Interval between injected errors
@@ -1671,7 +1671,7 @@ class core_ibex_mem_error_test extends core_ibex_directed_test;
     end
 
     forever begin
-      wait_for_core_exception(ibex_pkg::ExcCauseIllegalInsn);
+      wait_for_core_exception(ibex_xif_pkg::ExcCauseIllegalInsn);
       ++illegal_instruction_exceptions_seen;
     end
   endtask
@@ -1684,13 +1684,13 @@ class core_ibex_mem_error_test extends core_ibex_directed_test;
 endclass
 
 // U-mode mstatus.tw test class
-class core_ibex_umode_tw_test extends core_ibex_directed_test;
+class core_ibex_xif_umode_tw_test extends core_ibex_xif_directed_test;
 
-  `uvm_component_utils(core_ibex_umode_tw_test)
+  `uvm_component_utils(core_ibex_xif_umode_tw_test)
   `uvm_component_new
 
   virtual task check_stimulus();
-    bit [ibex_mem_intf_agent_pkg::DATA_WIDTH-1:0] mcause;
+    bit [ibex_xif_mem_intf_agent_pkg::DATA_WIDTH-1:0] mcause;
     forever begin
       wait (dut_vif.dut_cb.wfi === 1'b1);
       check_illegal_insn("Core did not treat U-mode WFI as illegal");
@@ -1700,9 +1700,9 @@ class core_ibex_umode_tw_test extends core_ibex_directed_test;
 endclass
 
 // Priv-mode CSR access test
-class core_ibex_invalid_csr_test extends core_ibex_directed_test;
+class core_ibex_xif_invalid_csr_test extends core_ibex_xif_directed_test;
 
-  `uvm_component_utils(core_ibex_invalid_csr_test)
+  `uvm_component_utils(core_ibex_xif_invalid_csr_test)
   `uvm_component_new
 
   virtual task check_stimulus();
@@ -1716,15 +1716,15 @@ class core_ibex_invalid_csr_test extends core_ibex_directed_test;
 
 endclass
 
-class core_ibex_fetch_en_chk_test extends core_ibex_directed_test;
+class core_ibex_xif_fetch_en_chk_test extends core_ibex_xif_directed_test;
 
-  `uvm_component_utils(core_ibex_fetch_en_chk_test)
+  `uvm_component_utils(core_ibex_xif_fetch_en_chk_test)
   `uvm_component_new
 
   virtual task send_stimulus();
     fetch_enable_seq fetch_enable_seq_h;
     fetch_enable_seq_h = fetch_enable_seq::type_id::create("fetch_enable_seq_h", this);
-    `uvm_info(`gfn, "Running core_ibex_fetch_en_chk_test", UVM_LOW)
+    `uvm_info(`gfn, "Running core_ibex_xif_fetch_en_chk_test", UVM_LOW)
     fork
       begin
         vseq.start(env.vseqr);
@@ -1740,12 +1740,12 @@ endclass
 // Stimulate a combination of traps/debug requests
 // - exceptions are inserted through the instruction generator cfg (testlist.yaml)
 // - interrupts/debug requests are inserted through testbench stimulus
-class core_ibex_assorted_traps_interrupts_debug_test extends core_ibex_directed_test;
+class core_ibex_xif_assorted_traps_interrupts_debug_test extends core_ibex_xif_directed_test;
 
    debug_new_seq debug_new_seq_h;
    irq_new_seq irq_new_seq_h;
 
-   `uvm_component_utils(core_ibex_assorted_traps_interrupts_debug_test)
+   `uvm_component_utils(core_ibex_xif_assorted_traps_interrupts_debug_test)
    `uvm_component_new
 
    virtual task send_stimulus();
@@ -1766,13 +1766,13 @@ class core_ibex_assorted_traps_interrupts_debug_test extends core_ibex_directed_
      debug_new_seq_h.stimulus_delay_cycles_max = 8000;
      debug_new_seq_h.zero_delay_pct = 0;
 
-     `uvm_info(`gfn, "Running test:->core_ibex_assorted_traps_interrupts_debug_test", UVM_LOW)
+     `uvm_info(`gfn, "Running test:->core_ibex_xif_assorted_traps_interrupts_debug_test", UVM_LOW)
      // Fork and never-join the different stimulus generators.
      // Irq and Debug-Request generators should run independently to each other,
      // and continue running until the end of the test binary.
      fork
        begin
-          // Calls body() in core_ibex_vseq.sv
+          // Calls body() in core_ibex_xif_vseq.sv
           // This starts the memory interface sequences
           // (It also configures sequences enabled by plusargs, but they're not used here)
           vseq.start(env.vseqr);

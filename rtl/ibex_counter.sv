@@ -1,4 +1,4 @@
-module ibex_counter #(
+module ibex_xif_counter #(
   parameter int CounterWidth = 32,
   // When set `counter_val_upd_o` provides an incremented version of the counter value, otherwise
   // the output is hard-wired to 0. This is required to allow Xilinx DSP inference to work

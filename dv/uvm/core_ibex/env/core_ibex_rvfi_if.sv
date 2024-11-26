@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // Interface to probe Ibex RVFI interface
-interface core_ibex_rvfi_if(input logic clk);
+interface core_ibex_xif_rvfi_if(input logic clk);
   logic        reset;
   logic        valid;
   logic [63:0] order;

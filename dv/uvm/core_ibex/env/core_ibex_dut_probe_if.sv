@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // Interface to probe DUT internal signal
-interface core_ibex_dut_probe_if(input logic clk);
+interface core_ibex_xif_dut_probe_if(input logic clk);
 
   import uvm_pkg::*;
 
@@ -14,20 +14,20 @@ interface core_ibex_dut_probe_if(input logic clk);
   logic                              ebreak;
   logic                              dret;
   logic                              mret;
-  ibex_pkg::ibex_mubi_t              fetch_enable;
+  ibex_xif_pkg::ibex_xif_mubi_t              fetch_enable;
   logic                              core_sleep;
   logic                              alert_minor;
   logic                              alert_major_internal;
   logic                              alert_major_bus;
   logic                              debug_req;
-  logic [ibex_pkg::IC_NUM_WAYS-1:0]  ic_tag_req;
+  logic [ibex_xif_pkg::IC_NUM_WAYS-1:0]  ic_tag_req;
   logic                              ic_tag_write;
-  logic [ibex_pkg::IC_INDEX_W-1:0]   ic_tag_addr;
-  logic [ibex_pkg::IC_NUM_WAYS-1:0]  ic_data_req;
+  logic [ibex_xif_pkg::IC_INDEX_W-1:0]   ic_tag_addr;
+  logic [ibex_xif_pkg::IC_NUM_WAYS-1:0]  ic_data_req;
   logic                              ic_data_write;
-  logic [ibex_pkg::IC_INDEX_W-1:0]   ic_data_addr;
-  ibex_pkg::priv_lvl_e               priv_mode;
-  ibex_pkg::ctrl_fsm_e               ctrl_fsm_cs;
+  logic [ibex_xif_pkg::IC_INDEX_W-1:0]   ic_data_addr;
+  ibex_xif_pkg::priv_lvl_e               priv_mode;
+  ibex_xif_pkg::ctrl_fsm_e               ctrl_fsm_cs;
   logic                              debug_mode;
   logic                              double_fault_seen;
   logic                              rf_ren_a;
@@ -37,14 +37,14 @@ interface core_ibex_dut_probe_if(input logic clk);
   logic                              sync_exc_seen;
   logic                              irq_exc_seen;
   logic                              csr_save_cause;
-  ibex_pkg::exc_cause_t              exc_cause;
+  ibex_xif_pkg::exc_cause_t              exc_cause;
   logic                              wb_exception;
 
   always @(posedge clk or posedge reset) begin
     if (reset) begin
       irq_exc_seen <= 1'b0;
     end else begin
-      if (ctrl_fsm_cs == ibex_pkg::IRQ_TAKEN) begin
+      if (ctrl_fsm_cs == ibex_xif_pkg::IRQ_TAKEN) begin
         irq_exc_seen <= 1'b1;
       end else if (mret) begin
         irq_exc_seen <= 1'b0;

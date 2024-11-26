@@ -2,12 +2,12 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
-class ibex_hardware_triggers_debug_rom_gen extends riscv_debug_rom_gen;
+class ibex_xif_hardware_triggers_debug_rom_gen extends riscv_debug_rom_gen;
 
-  `uvm_object_utils(ibex_hardware_triggers_debug_rom_gen)
+  `uvm_object_utils(ibex_xif_hardware_triggers_debug_rom_gen)
   `uvm_object_new
 
-  int unsigned ibex_trigger_idx = 0; // See. [DbgHwBreakNum]
+  int unsigned ibex_xif_trigger_idx = 0; // See. [DbgHwBreakNum]
 
   virtual function void gen_program();
     string instr[$];
@@ -15,7 +15,7 @@ class ibex_hardware_triggers_debug_rom_gen extends riscv_debug_rom_gen;
     // Don't save off GPRs (ie. this WILL modify program flow)
     // (We want to capture a register value (gpr[1]) from the directed_instr_streams in
     // main() that contains the address for our next trigger.)
-    // This works in tandem with 'ibex_breakpoint_stream' which stores the address of
+    // This works in tandem with 'ibex_xif_breakpoint_stream' which stores the address of
     // the instruction to trigger on in a fixed register, then executes an EBREAK to
     // enter debug mode via the dcsr.ebreakm=1 functionality. The debug rom code
     // then sets up the breakpoint trigger to this address, and returns, allowing main
@@ -45,10 +45,10 @@ class ibex_hardware_triggers_debug_rom_gen extends riscv_debug_rom_gen;
 
              // DCSR.cause == EBREAK
              "1: nop",
-             // 'ibex_breakpoint_stream' inserts EBREAKs such that cfg.gpr[1]
+             // 'ibex_xif_breakpoint_stream' inserts EBREAKs such that cfg.gpr[1]
              // now contain the address of the next trigger.
              // Enable the trigger and set to this address.
-             $sformatf("csrrwi  zero, 0x%0x, %0d",  TSELECT, ibex_trigger_idx),
+             $sformatf("csrrwi  zero, 0x%0x, %0d",  TSELECT, ibex_xif_trigger_idx),
              $sformatf("csrrw   zero, 0x%0x, x0",   TDATA1),
              $sformatf("csrrw   zero, 0x%0x, x%0d", TDATA2, cfg.gpr[1]),
              $sformatf("csrrwi  zero, 0x%0x, 5",    TDATA1),
@@ -61,7 +61,7 @@ class ibex_hardware_triggers_debug_rom_gen extends riscv_debug_rom_gen;
              // DCSR.cause == TRIGGER
              "2: nop",
              // Disable the trigger until the next breakpoint is known.
-             $sformatf("csrrwi  zero, 0x%0x, %0d", TSELECT, ibex_trigger_idx),
+             $sformatf("csrrwi  zero, 0x%0x, %0d", TSELECT, ibex_xif_trigger_idx),
              $sformatf("csrrw   zero, 0x%0x, x0",  TDATA1),
              $sformatf("csrrw   zero, 0x%0x, x0",  TDATA2),
              "j 4f",
@@ -104,15 +104,15 @@ class ibex_hardware_triggers_debug_rom_gen extends riscv_debug_rom_gen;
 
 endclass
 
-class ibex_hardware_triggers_asm_program_gen extends ibex_asm_program_gen;
+class ibex_xif_hardware_triggers_asm_program_gen extends ibex_xif_asm_program_gen;
 
-  `uvm_object_utils(ibex_hardware_triggers_asm_program_gen)
+  `uvm_object_utils(ibex_xif_hardware_triggers_asm_program_gen)
   `uvm_object_new
 
   // Same implementation as the parent class, except substitute for our custom debug_rom class.
   virtual function void gen_debug_rom(int hart);
     `uvm_info(`gfn, "Creating debug ROM", UVM_LOW)
-    debug_rom = ibex_hardware_triggers_debug_rom_gen::
+    debug_rom = ibex_xif_hardware_triggers_debug_rom_gen::
                 type_id::create("debug_rom", , {"uvm_test_top", ".", `gfn});
     debug_rom.cfg = cfg;
     debug_rom.hart = hart;
@@ -123,9 +123,9 @@ class ibex_hardware_triggers_asm_program_gen extends ibex_asm_program_gen;
 endclass
 
 
-class ibex_hardware_triggers_illegal_instr extends riscv_illegal_instr;
+class ibex_xif_hardware_triggers_illegal_instr extends riscv_illegal_instr;
 
-  `uvm_object_utils(ibex_hardware_triggers_illegal_instr)
+  `uvm_object_utils(ibex_xif_hardware_triggers_illegal_instr)
   `uvm_object_new
 
   // Make it super-obvious where the illegal instructions are in the assembly.
@@ -134,4 +134,4 @@ class ibex_hardware_triggers_illegal_instr extends riscv_illegal_instr;
     comment = "INVALID";
   endfunction
 
-endclass // ibex_illegal_instr
+endclass // ibex_xif_illegal_instr

@@ -4,28 +4,28 @@
 
 // A "combination vseq", which runs proper virtual sequences in a random order.
 
-class ibex_icache_combo_vseq
+class ibex_xif_icache_combo_vseq
   extends dv_base_vseq #(
-    .CFG_T               (ibex_icache_env_cfg),
-    .COV_T               (ibex_icache_env_cov),
-    .VIRTUAL_SEQUENCER_T (ibex_icache_virtual_sequencer)
+    .CFG_T               (ibex_xif_icache_env_cfg),
+    .COV_T               (ibex_xif_icache_env_cov),
+    .VIRTUAL_SEQUENCER_T (ibex_xif_icache_virtual_sequencer)
   );
-  `uvm_object_utils(ibex_icache_combo_vseq)
+  `uvm_object_utils(ibex_xif_icache_combo_vseq)
   `uvm_object_new
 
   // The number of transactions across the combined sequences
   constraint num_trans_c { num_trans inside {[800:1000]}; }
 
   // The virtual sequences from which we'll build the test. Note that this doesn't contain
-  // "ibex_icache_oldval_vseq": that sequence is for a specific test, which has a slightly different
+  // "ibex_xif_icache_oldval_vseq": that sequence is for a specific test, which has a slightly different
   // checker.
-  string seq_names[] = {"ibex_icache_back_line_vseq",
-                        "ibex_icache_base_vseq", // for smoke test
-                        "ibex_icache_caching_vseq",
-                        "ibex_icache_ecc_vseq",
-                        "ibex_icache_invalidation_vseq",
-                        "ibex_icache_many_errors_vseq",
-                        "ibex_icache_passthru_vseq"};
+  string seq_names[] = {"ibex_xif_icache_back_line_vseq",
+                        "ibex_xif_icache_base_vseq", // for smoke test
+                        "ibex_xif_icache_caching_vseq",
+                        "ibex_xif_icache_ecc_vseq",
+                        "ibex_xif_icache_invalidation_vseq",
+                        "ibex_xif_icache_many_errors_vseq",
+                        "ibex_xif_icache_passthru_vseq"};
 
   // If this is set, occasionally reset the DUT and start a new sequence at a time that the core
   // sequence wouldn't normally expect.
@@ -35,10 +35,10 @@ class ibex_icache_combo_vseq
   int unsigned seqs_so_far = 0;
 
   // The child (virtual) sequence
-  ibex_icache_base_vseq child_seq;
+  ibex_xif_icache_base_vseq child_seq;
 
   // The previous sequence that we ran.
-  ibex_icache_base_vseq prev_seq = null;
+  ibex_xif_icache_base_vseq prev_seq = null;
 
   task body();
     int unsigned trans_so_far = 0;
@@ -133,4 +133,4 @@ class ibex_icache_combo_vseq
     disable fork;
   endtask : run_sequence
 
-endclass : ibex_icache_combo_vseq
+endclass : ibex_xif_icache_combo_vseq

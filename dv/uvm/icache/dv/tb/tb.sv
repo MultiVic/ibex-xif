@@ -2,15 +2,15 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 //
-import ibex_pkg::*;
+import ibex_xif_pkg::*;
 module tb #(
  parameter bit ICacheECC = 1'b1
  );
   // dep packages
   import uvm_pkg::*;
   import dv_utils_pkg::*;
-  import ibex_icache_env_pkg::*;
-  import ibex_icache_test_pkg::*;
+  import ibex_xif_icache_env_pkg::*;
+  import ibex_xif_icache_test_pkg::*;
 
   // macro includes
   `include "uvm_macros.svh"
@@ -21,8 +21,8 @@ module tb #(
   // interfaces
   clk_rst_if clk_rst_if(.clk(clk), .rst_n(rst_n));
 
-  ibex_icache_core_if core_if (.clk(clk), .rst_n(rst_n));
-  ibex_icache_mem_if  mem_if  (.clk(clk), .rst_n(rst_n));
+  ibex_xif_icache_core_if core_if (.clk(clk), .rst_n(rst_n));
+  ibex_xif_icache_mem_if  mem_if  (.clk(clk), .rst_n(rst_n));
 
   bit           scramble_key_valid, scramble_req;
   logic [127:0] scramble_key;
@@ -34,7 +34,7 @@ module tb #(
   localparam int unsigned NumAddrScrRounds  = 2;
   localparam int unsigned NumDiffRounds     = NumAddrScrRounds;
 
-  ibex_icache_ram_if #(
+  ibex_xif_icache_ram_if #(
     .TagSizeECC(TagSizeECC),
     .LineSizeECC(LineSizeECC)
   ) ram_if (
@@ -49,7 +49,7 @@ module tb #(
   logic                           scramble_req_d, scramble_req_q;
 
   // DUT
-  ibex_icache #(
+  ibex_xif_icache #(
       .ICacheECC       (ICacheECC),
       .BusSizeECC      (BusSizeECC),
       .TagSizeECC      (TagSizeECC),
@@ -220,15 +220,15 @@ module tb #(
     // Store virtual interfaces into the UVM config database. ECC interfaces are done separately
     // above because otherwise you have to repeat the (verbose) generate loop.
     uvm_config_db#(virtual clk_rst_if)::set(null, "*.env", "clk_rst_vif", clk_rst_if);
-    uvm_config_db#(virtual ibex_icache_core_if)::set(null, "*.env.core_agent*", "vif", core_if);
-    uvm_config_db#(virtual ibex_icache_mem_if)::set(null, "*.env.mem_agent*", "vif", mem_if);
+    uvm_config_db#(virtual ibex_xif_icache_core_if)::set(null, "*.env.core_agent*", "vif", core_if);
+    uvm_config_db#(virtual ibex_xif_icache_mem_if)::set(null, "*.env.mem_agent*", "vif", mem_if);
     uvm_config_db#(scrambling_key_vif)::set(
       null, "*.env.scrambling_key_agent*", "vif", scrambling_key_if);
 
     // Record the number of (ECC) ways in the config database. The top-level environment's config
     // will use this to decide how many agents to create.
-    uvm_config_db#(int unsigned)::set(null, "*", "num_ecc_ways", dut.ICacheECC ? ibex_pkg::IC_NUM_WAYS : 0);
-    uvm_config_db#(ibex_icache_ram_vif)::set(null, "*.env*", "vif", ram_if);
+    uvm_config_db#(int unsigned)::set(null, "*", "num_ecc_ways", dut.ICacheECC ? ibex_xif_pkg::IC_NUM_WAYS : 0);
+    uvm_config_db#(ibex_xif_icache_ram_vif)::set(null, "*.env*", "vif", ram_if);
 
     $timeformat(-12, 0, " ps", 12);
     run_test();

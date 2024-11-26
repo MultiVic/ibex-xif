@@ -7,30 +7,30 @@
 // default. Other simulators don't take the detour via `define and can override the corresponding
 // parameters directly.
 `ifndef RV32M
-  `define RV32M ibex_pkg::RV32MFast
+  `define RV32M ibex_xif_pkg::RV32MFast
 `endif
 
 `ifndef RV32B
-  `define RV32B ibex_pkg::RV32BNone
+  `define RV32B ibex_xif_pkg::RV32BNone
 `endif
 
 `ifndef RegFile
-  `define RegFile ibex_pkg::RegFileFF
+  `define RegFile ibex_xif_pkg::RegFileFF
 `endif
 
 /**
  * Ibex simple system
  *
- * This is a basic system consisting of an ibex, a 1 MB sram for instruction/data
+ * This is a basic system consisting of an ibex_xif, a 1 MB sram for instruction/data
  * and a small memory mapped control module for outputting ASCII text and
- * controlling/halting the simulation from the software running on the ibex.
+ * controlling/halting the simulation from the software running on the ibex_xif.
  *
  * It is designed to be used with verilator but should work with other
  * simulators, a small amount of work may be required to support the
  * simulator_ctrl module.
  */
 
-module ibex_simple_system (
+module ibex_xif_simple_system (
   input IO_CLK,
   input IO_RST_N
 );
@@ -43,9 +43,9 @@ module ibex_simple_system (
   parameter int unsigned        MHPMCounterNum           = 0;
   parameter int unsigned        MHPMCounterWidth         = 40;
   parameter bit                 RV32E                    = 1'b0;
-  parameter ibex_pkg::rv32m_e   RV32M                    = `RV32M;
-  parameter ibex_pkg::rv32b_e   RV32B                    = `RV32B;
-  parameter ibex_pkg::regfile_e RegFile                  = `RegFile;
+  parameter ibex_xif_pkg::rv32m_e   RV32M                    = `RV32M;
+  parameter ibex_xif_pkg::rv32b_e   RV32B                    = `RV32B;
+  parameter ibex_xif_pkg::regfile_e RegFile                  = `RegFile;
   parameter bit                 BranchTargetALU          = 1'b0;
   parameter bit                 WritebackStage           = 1'b0;
   parameter bit                 ICache                   = 1'b0;
@@ -186,7 +186,7 @@ module ibex_simple_system (
     assign instr_rdata_intg = '0;
   end
 
-  ibex_top_tracing #(
+  ibex_xif_top_tracing #(
       .SecureIbex      ( SecureIbex       ),
       .ICacheScramble  ( ICacheScramble   ),
       .PMPEnable       ( PMPEnable        ),
@@ -253,7 +253,7 @@ module ibex_simple_system (
       .crash_dump_o           (),
       .double_fault_seen_o    (),
 
-      .fetch_enable_i         (ibex_pkg::IbexMuBiOn),
+      .fetch_enable_i         (ibex_xif_pkg::IbexMuBiOn),
       .alert_minor_o          (),
       .alert_major_internal_o (),
       .alert_major_bus_o      (),
@@ -286,7 +286,7 @@ module ibex_simple_system (
     );
 
   simulator_ctrl #(
-    .LogName("ibex_simple_system.log")
+    .LogName("ibex_xif_simple_system.log")
     ) u_simulator_ctrl (
       .clk_i     (clk_sys),
       .rst_ni    (rst_sys_n),
@@ -321,13 +321,13 @@ module ibex_simple_system (
   export "DPI-C" function mhpmcounter_num;
 
   function automatic int unsigned mhpmcounter_num();
-    return u_top.u_ibex_top.u_ibex_core.cs_registers_i.MHPMCounterNum;
+    return u_top.u_ibex_xif_top.u_ibex_xif_core.cs_registers_i.MHPMCounterNum;
   endfunction
 
   export "DPI-C" function mhpmcounter_get;
 
   function automatic longint unsigned mhpmcounter_get(int index);
-    return u_top.u_ibex_top.u_ibex_core.cs_registers_i.mhpmcounter[index];
+    return u_top.u_ibex_xif_top.u_ibex_xif_core.cs_registers_i.mhpmcounter[index];
   endfunction
 
 endmodule

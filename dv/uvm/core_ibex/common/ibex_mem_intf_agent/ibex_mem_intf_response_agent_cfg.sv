@@ -3,13 +3,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-// CLASS: ibex_mem_intf_response_agent_cfg
+// CLASS: ibex_xif_mem_intf_response_agent_cfg
 //------------------------------------------------------------------------------
 
-class ibex_mem_intf_response_agent_cfg extends uvm_object;
+class ibex_xif_mem_intf_response_agent_cfg extends uvm_object;
 
   // interface handle used by driver & monitor
-  virtual ibex_mem_intf vif;
+  virtual ibex_xif_mem_intf vif;
 
   // When set write responses have a fixed 32'hffffffff for rdata and matching correct rintg. When
   // unset both rdata and rintg fields are x for write responses
@@ -44,7 +44,7 @@ class ibex_mem_intf_response_agent_cfg extends uvm_object;
                       0 :/ 100 - zero_delay_pct};
   }
 
-  `uvm_object_utils_begin(ibex_mem_intf_response_agent_cfg)
+  `uvm_object_utils_begin(ibex_xif_mem_intf_response_agent_cfg)
     `uvm_field_int(fixed_data_write_response, UVM_DEFAULT)
     `uvm_field_int(gnt_delay_min,             UVM_DEFAULT)
     `uvm_field_int(gnt_delay_max,             UVM_DEFAULT)

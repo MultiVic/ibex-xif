@@ -1,4 +1,4 @@
-interface ibex_icache_fcov_if import ibex_pkg::*; #(
+interface ibex_xif_icache_fcov_if import ibex_xif_pkg::*; #(
   parameter int NUM_FB = 4
 ) (
   input                   clk_i,

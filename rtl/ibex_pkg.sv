@@ -6,7 +6,7 @@
 /**
  * Package with constants used by Ibex
  */
-package ibex_pkg;
+package ibex_xif_pkg;
 
   ////////////////
   // IO Structs //
@@ -656,12 +656,12 @@ package ibex_pkg;
 
   // Mult-bit signal used for security hardening. For non-secure implementation all bits other than
   // the bottom bit are ignored.
-  typedef logic [3:0] ibex_mubi_t;
+  typedef logic [3:0] ibex_xif_mubi_t;
 
   // Note that if adjusting these parameters it is assumed the bottom bit is set for On and unset
   // for Off. This allows the use of IbexMuBiOn/IbexMuBiOff to work for both secure and non-secure
-  // Ibex. If this assumption is broken the RTL that uses ibex_mubi_t types such as the fetch_enable
-  // and core_busy signals within `ibex_core` may need adjusting.
-  parameter ibex_mubi_t IbexMuBiOn  = 4'b0101;
-  parameter ibex_mubi_t IbexMuBiOff = 4'b1010;
+  // Ibex. If this assumption is broken the RTL that uses ibex_xif_mubi_t types such as the fetch_enable
+  // and core_busy signals within `ibex_xif_core` may need adjusting.
+  parameter ibex_xif_mubi_t IbexMuBiOn  = 4'b0101;
+  parameter ibex_xif_mubi_t IbexMuBiOff = 4'b1010;
 endpackage

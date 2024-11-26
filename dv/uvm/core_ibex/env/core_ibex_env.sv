@@ -3,41 +3,41 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // ---------------------------------------------
-// ibex processor core environment class
+// ibex_xif processor core environment class
 // ---------------------------------------------
-class core_ibex_env extends uvm_env;
+class core_ibex_xif_env extends uvm_env;
 
-  ibex_mem_intf_response_agent   data_if_response_agent;
-  ibex_mem_intf_response_agent   instr_if_response_agent;
+  ibex_xif_mem_intf_response_agent   data_if_response_agent;
+  ibex_xif_mem_intf_response_agent   instr_if_response_agent;
   irq_request_agent              irq_agent;
-  ibex_cosim_agent               cosim_agent;
-  core_ibex_vseqr                vseqr;
-  core_ibex_env_cfg              cfg;
+  ibex_xif_cosim_agent               cosim_agent;
+  core_ibex_xif_vseqr                vseqr;
+  core_ibex_xif_env_cfg              cfg;
   scrambling_key_agent           scrambling_key_agent_h;
-  core_ibex_scoreboard           scoreboard;
+  core_ibex_xif_scoreboard           scoreboard;
 
-  `uvm_component_utils(core_ibex_env)
+  `uvm_component_utils(core_ibex_xif_env)
   `uvm_component_new
 
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    if (!uvm_config_db#(core_ibex_env_cfg)::get(this, "", "cfg", cfg)) begin
+    if (!uvm_config_db#(core_ibex_xif_env_cfg)::get(this, "", "cfg", cfg)) begin
       `uvm_fatal(get_full_name(), "Cannot get cfg")
     end
     if (!uvm_config_db#(virtual clk_rst_if)::get(this, "", "clk_if",
-                                                 cfg.ibex_clk_vif)) begin
-      `uvm_fatal(`gfn, "failed to get ibex clk_if from uvm_config_db")
+                                                 cfg.ibex_xif_clk_vif)) begin
+      `uvm_fatal(`gfn, "failed to get ibex_xif clk_if from uvm_config_db")
     end
-    if (!uvm_config_db#(virtual core_ibex_dut_probe_if)::get(this, "", "dut_if",
-                                                             cfg.ibex_dut_vif)) begin
-      `uvm_fatal(`gfn, "failed to get ibex dut_if from uvm_config_db")
+    if (!uvm_config_db#(virtual core_ibex_xif_dut_probe_if)::get(this, "", "dut_if",
+                                                             cfg.ibex_xif_dut_vif)) begin
+      `uvm_fatal(`gfn, "failed to get ibex_xif dut_if from uvm_config_db")
     end
-    data_if_response_agent = ibex_mem_intf_response_agent::type_id::
+    data_if_response_agent = ibex_xif_mem_intf_response_agent::type_id::
                           create("data_if_response_agent", this);
-    instr_if_response_agent = ibex_mem_intf_response_agent::type_id::
+    instr_if_response_agent = ibex_xif_mem_intf_response_agent::type_id::
                            create("instr_if_response_agent", this);
     irq_agent = irq_request_agent::type_id::create("irq_agent", this);
-    cosim_agent = ibex_cosim_agent::type_id::create("cosim_agent", this);
+    cosim_agent = ibex_xif_cosim_agent::type_id::create("cosim_agent", this);
 
     scrambling_key_agent_h = scrambling_key_agent::type_id::create("scrambling_key_agent_h", this);
     uvm_config_db#(scrambling_key_agent_cfg)::set(this, "scrambling_key_agent_h", "cfg",
@@ -45,9 +45,9 @@ class core_ibex_env extends uvm_env;
     cfg.scrambling_key_cfg.agent_type = push_pull_agent_pkg::PullAgent;
     cfg.scrambling_key_cfg.if_mode = dv_utils_pkg::Device;
     // Create virtual sequencer
-    vseqr = core_ibex_vseqr::type_id::create("vseqr", this);
+    vseqr = core_ibex_xif_vseqr::type_id::create("vseqr", this);
     // Create scoreboard
-    scoreboard = core_ibex_scoreboard::type_id::create("scoreboard", this);
+    scoreboard = core_ibex_xif_scoreboard::type_id::create("scoreboard", this);
   endfunction : build_phase
 
   function void connect_phase(uvm_phase phase);

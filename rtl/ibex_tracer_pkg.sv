@@ -3,8 +3,8 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
-package ibex_tracer_pkg;
-  import ibex_pkg::*;
+package ibex_xif_tracer_pkg;
+  import ibex_xif_pkg::*;
 
   parameter logic [1:0] OPCODE_C0 = 2'b00;
   parameter logic [1:0] OPCODE_C1 = 2'b01;
@@ -90,7 +90,7 @@ package ibex_tracer_pkg;
   // The zext.h and zext.b pseudo-instructions are defined in the ratified v.1.0.0 and draft v.0.94
   // specifications of the bitmanip extension, respectively. They are currently not emitted by the
   // tracer due to a lack of support in the LLVM and GCC toolchains. Enabling this functionality
-  // when the time is right is tracked in https://github.com/lowRISC/ibex/issues/1228
+  // when the time is right is tracked in https://github.com/lowRISC/ibex_xif/issues/1228
   // zext.b -- pseudo-instruction: andi rd, rs 255
   // parameter logic [31:0] INSN_ZEXTB =
   //     { 4'b0000, 8'b11111111, 5'h?, 3'b111, 5'h?, {OPCODE_OP_IMM} };

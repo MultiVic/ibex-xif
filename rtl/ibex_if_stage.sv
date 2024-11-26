@@ -13,7 +13,7 @@
 `include "prim_assert.sv"
 `include "dv_fcov_macros.svh"
 
-module ibex_if_stage import ibex_pkg::*; #(
+module ibex_xif_if_stage import ibex_xif_pkg::*; #(
   parameter int unsigned DmHaltAddr        = 32'h1A110800,
   parameter int unsigned DmExceptionAddr   = 32'h1A110808,
   parameter bit          DummyInstructions = 1'b0,
@@ -169,7 +169,7 @@ module ibex_if_stage import ibex_pkg::*; #(
 
   logic        [4:0] irq_vec;
 
-  ibex_pkg::pc_sel_e pc_mux_internal;
+  ibex_xif_pkg::pc_sel_e pc_mux_internal;
 
   logic        [7:0] unused_boot_addr;
   logic        [7:0] unused_csr_mtvec;
@@ -263,7 +263,7 @@ module ibex_if_stage import ibex_pkg::*; #(
 
   if (ICache) begin : gen_icache
     // Full I-Cache option
-    ibex_icache #(
+    ibex_xif_icache #(
       .ICacheECC       (ICacheECC),
       .ResetAll        (ResetAll),
       .BusSizeECC      (BusSizeECC),
@@ -312,7 +312,7 @@ module ibex_if_stage import ibex_pkg::*; #(
     );
   end else begin : gen_prefetch_buffer
     // prefetch buffer, caches a fixed number of instructions
-    ibex_prefetch_buffer #(
+    ibex_xif_prefetch_buffer #(
       .ResetAll        (ResetAll)
     ) prefetch_buffer_i (
         .clk_i               ( clk_i                      ),
@@ -401,7 +401,7 @@ module ibex_if_stage import ibex_pkg::*; #(
   //
   // since it does not matter where we decompress instructions, we do it here
   // to ease timing closure
-  ibex_compressed_decoder compressed_decoder_i (
+  ibex_xif_compressed_decoder compressed_decoder_i (
     .clk_i          (clk_i),
     .rst_ni         (rst_ni),
     .valid_i        (fetch_valid & ~fetch_err),
@@ -417,7 +417,7 @@ module ibex_if_stage import ibex_pkg::*; #(
     logic        insert_dummy_instr;
     logic [31:0] dummy_instr_data;
 
-    ibex_dummy_instr #(
+    ibex_xif_dummy_instr #(
       .RndCnstLfsrSeed (RndCnstLfsrSeed),
       .RndCnstLfsrPerm (RndCnstLfsrPerm)
     ) dummy_instr_i (
@@ -638,7 +638,7 @@ module ibex_if_stage import ibex_pkg::*; #(
       end
     end
 
-    ibex_branch_predict branch_predict_i (
+    ibex_xif_branch_predict branch_predict_i (
       .clk_i        (clk_i),
       .rst_ni       (rst_ni),
       .fetch_rdata_i(fetch_rdata),

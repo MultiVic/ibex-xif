@@ -4,7 +4,7 @@
 
 `include "prim_assert.sv"
 
-interface core_ibex_pmp_fcov_if import ibex_pkg::*; #(
+interface core_ibex_xif_pmp_fcov_if import ibex_xif_pkg::*; #(
     parameter bit          PMPEnable      = 1'b0,
     // Granularity of NAPOT access,
     // 0 = No restriction, 1 = 8 byte, 2 = 16 byte, 3 = 32 byte, etc.
@@ -15,7 +15,7 @@ interface core_ibex_pmp_fcov_if import ibex_pkg::*; #(
   input clk_i,
   input rst_ni,
 
-  input ibex_pkg::pmp_cfg_t  csr_pmp_cfg     [PMPNumRegions],
+  input ibex_xif_pkg::pmp_cfg_t  csr_pmp_cfg     [PMPNumRegions],
   input logic[33:0]          csr_pmp_addr    [PMPNumRegions],
   input logic                pmp_req_err     [3],
   input pmp_mseccfg_t        csr_pmp_mseccfg,
@@ -90,7 +90,7 @@ interface core_ibex_pmp_fcov_if import ibex_pkg::*; #(
 
   initial begin
     if (PMPEnable) begin
-      void'($value$plusargs("enable_ibex_fcov=%d", en_pmp_fcov));
+      void'($value$plusargs("enable_ibex_xif_fcov=%d", en_pmp_fcov));
     end else begin
       en_pmp_fcov = 1'b0;
     end
@@ -671,7 +671,7 @@ interface core_ibex_pmp_fcov_if import ibex_pkg::*; #(
                                cs_registers_i.priv_mode_id_o, pmp_current_priv_req_err,
                                pmp_dside_req_err iff
                                  (id_stage_i.instr_rdata_i[6:0] inside
-                                    {ibex_pkg::OPCODE_LOAD, ibex_pkg::OPCODE_STORE} &&
+                                    {ibex_xif_pkg::OPCODE_LOAD, ibex_xif_pkg::OPCODE_STORE} &&
                                   cs_registers_i.mstatus_q.mprv){
         ignore_bins SamePriv =
           (binsof(cs_registers_i.mstatus_q.mpp) intersect {PRIV_LVL_M} &&

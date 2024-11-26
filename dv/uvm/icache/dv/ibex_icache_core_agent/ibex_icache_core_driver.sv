@@ -2,11 +2,11 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
-class ibex_icache_core_driver
-  extends dv_base_driver #(.ITEM_T     (ibex_icache_core_req_item),
-                           .RSP_ITEM_T (ibex_icache_core_rsp_item),
-                           .CFG_T      (ibex_icache_core_agent_cfg));
-  `uvm_component_utils(ibex_icache_core_driver)
+class ibex_xif_icache_core_driver
+  extends dv_base_driver #(.ITEM_T     (ibex_xif_icache_core_req_item),
+                           .RSP_ITEM_T (ibex_xif_icache_core_rsp_item),
+                           .CFG_T      (ibex_xif_icache_core_agent_cfg));
+  `uvm_component_utils(ibex_xif_icache_core_driver)
   `uvm_component_new
 
   // An analysis port that gets hooked up to the scoreboard and the memory agent. This isn't used to
@@ -25,13 +25,13 @@ class ibex_icache_core_driver
 
   // drive trans received from sequencer
   virtual task automatic get_and_drive();
-    ibex_icache_core_rsp_item rsp;
+    ibex_xif_icache_core_rsp_item rsp;
 
     forever begin
       seq_item_port.get_next_item(req);
       `uvm_info(`gfn, $sformatf("rcvd item:\n%0s", req.sprint()), UVM_HIGH)
 
-      rsp = ibex_icache_core_rsp_item::type_id::create("rsp");
+      rsp = ibex_xif_icache_core_rsp_item::type_id::create("rsp");
       rsp.set_id_info(req);
 
       rsp.saw_error = 1'b0;
@@ -51,8 +51,8 @@ class ibex_icache_core_driver
   //
   // This concurrently asserts branch with a given address for a cycle while doing the usual
   // (enable/disable, invalidate, read instructions).
-  task automatic drive_branch_trans(ibex_icache_core_rsp_item rsp,
-                                    ibex_icache_core_req_item req);
+  task automatic drive_branch_trans(ibex_xif_icache_core_rsp_item rsp,
+                                    ibex_xif_icache_core_req_item req);
     // Make sure that req is enabled (has no effect unless this is the first transaction)
     cfg.vif.driver_cb.req <= 1'b1;
 
@@ -86,8 +86,8 @@ class ibex_icache_core_driver
   //
   // This lowers req for zero or more cycles, at the same time as setting the enable pin and (maybe)
   // pulsing the invalidate line. Once that is done, it reads zero or more instructions.
-  task automatic drive_req_trans(ibex_icache_core_rsp_item rsp,
-                                 ibex_icache_core_req_item req);
+  task automatic drive_req_trans(ibex_xif_icache_core_rsp_item rsp,
+                                 ibex_xif_icache_core_req_item req);
     int unsigned req_low_cycles;
     bit          allow_no_low_cycles;
 
@@ -122,7 +122,7 @@ class ibex_icache_core_driver
 
   // Read up to num_insns instructions from the cache, stopping early on an error. If there was an
   // error, fill in the saw_error flag in rsp (which will be passed back to the sequence).
-  task automatic read_insns(ibex_icache_core_rsp_item rsp, int num_insns);
+  task automatic read_insns(ibex_xif_icache_core_rsp_item rsp, int num_insns);
     for (int i = 0; i < num_insns; i++) begin
       read_insn();
       // Spot any error and exit early

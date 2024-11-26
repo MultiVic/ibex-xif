@@ -5,7 +5,7 @@
 
 // Define a short riscv-dv directed instruction stream to setup hardware breakpoints
 // (TSELECT/TDATA), and then trigger on an instruction at the end of this stream.
-class ibex_breakpoint_stream extends riscv_directed_instr_stream;
+class ibex_xif_breakpoint_stream extends riscv_directed_instr_stream;
 
   riscv_pseudo_instr   la_instr;
   riscv_instr          ebreak_insn;
@@ -15,7 +15,7 @@ class ibex_breakpoint_stream extends riscv_directed_instr_stream;
     num_of_instr inside {[5:10]};
   }
 
-  `uvm_object_utils(ibex_breakpoint_stream)
+  `uvm_object_utils(ibex_xif_breakpoint_stream)
 
   function new(string name = "");
     super.new(name);
@@ -63,9 +63,9 @@ class ibex_breakpoint_stream extends riscv_directed_instr_stream;
 endclass
 
 // Define a short riscv-dv directed instruction stream to write random values to MSECCFG CSR
-class ibex_rand_mseccfg_stream extends riscv_directed_instr_stream;
+class ibex_xif_rand_mseccfg_stream extends riscv_directed_instr_stream;
 
-  `uvm_object_utils(ibex_rand_mseccfg_stream)
+  `uvm_object_utils(ibex_xif_rand_mseccfg_stream)
 
   function new(string name = "");
     super.new(name);
@@ -88,9 +88,9 @@ class ibex_rand_mseccfg_stream extends riscv_directed_instr_stream;
 endclass
 
 // Stream to randomly toggle different Ibex specific feature enables in cpuctrlsts
-class ibex_rand_cpuctrlsts_stream extends riscv_directed_instr_stream;
+class ibex_xif_rand_cpuctrlsts_stream extends riscv_directed_instr_stream;
 
-  `uvm_object_utils(ibex_rand_cpuctrlsts_stream)
+  `uvm_object_utils(ibex_xif_rand_cpuctrlsts_stream)
 
   function new(string name = "");
     super.new(name);
@@ -168,9 +168,9 @@ class ibex_rand_cpuctrlsts_stream extends riscv_directed_instr_stream;
 endclass
 
 // Define a short riscv-dv directed instruction stream to set a valid NA4 address/config
-class ibex_valid_na4_stream extends riscv_directed_instr_stream;
+class ibex_xif_valid_na4_stream extends riscv_directed_instr_stream;
 
-  `uvm_object_utils(ibex_valid_na4_stream)
+  `uvm_object_utils(ibex_xif_valid_na4_stream)
 
   function new(string name = "");
     super.new(name);
@@ -228,8 +228,8 @@ class ibex_valid_na4_stream extends riscv_directed_instr_stream;
 
 endclass
 
-class ibex_cross_pmp_region_mem_access_stream extends riscv_directed_instr_stream;
-  `uvm_object_utils(ibex_cross_pmp_region_mem_access_stream)
+class ibex_xif_cross_pmp_region_mem_access_stream extends riscv_directed_instr_stream;
+  `uvm_object_utils(ibex_xif_cross_pmp_region_mem_access_stream)
 
   int unsigned pmp_region;
   int unsigned region_mask;
@@ -318,8 +318,8 @@ class ibex_cross_pmp_region_mem_access_stream extends riscv_directed_instr_strea
   endfunction
 endclass
 
-class ibex_make_pmp_region_exec_stream extends riscv_directed_instr_stream;
-  `uvm_object_utils(ibex_make_pmp_region_exec_stream)
+class ibex_xif_make_pmp_region_exec_stream extends riscv_directed_instr_stream;
+  `uvm_object_utils(ibex_xif_make_pmp_region_exec_stream)
 
   int unsigned pmp_region;
 

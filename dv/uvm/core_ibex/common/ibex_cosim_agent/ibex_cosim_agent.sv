@@ -4,16 +4,16 @@
 
 `include "cosim_dpi.svh"
 
-class ibex_cosim_agent extends uvm_agent;
-  ibex_rvfi_monitor rvfi_monitor;
-  ibex_ifetch_monitor ifetch_monitor;
-  ibex_ifetch_pmp_monitor ifetch_pmp_monitor;
-  ibex_cosim_scoreboard scoreboard;
+class ibex_xif_cosim_agent extends uvm_agent;
+  ibex_xif_rvfi_monitor rvfi_monitor;
+  ibex_xif_ifetch_monitor ifetch_monitor;
+  ibex_xif_ifetch_pmp_monitor ifetch_pmp_monitor;
+  ibex_xif_cosim_scoreboard scoreboard;
 
-  uvm_analysis_export#(ibex_mem_intf_seq_item) dmem_port;
-  uvm_analysis_export#(ibex_mem_intf_seq_item) imem_port;
+  uvm_analysis_export#(ibex_xif_mem_intf_seq_item) dmem_port;
+  uvm_analysis_export#(ibex_xif_mem_intf_seq_item) imem_port;
 
-  `uvm_component_utils(ibex_cosim_agent)
+  `uvm_component_utils(ibex_xif_cosim_agent)
 
   function new(string name="", uvm_component parent=null);
     super.new(name, parent);
@@ -25,10 +25,10 @@ class ibex_cosim_agent extends uvm_agent;
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
 
-    rvfi_monitor       = ibex_rvfi_monitor::type_id::create("rvfi_monitor", this);
-    scoreboard         = ibex_cosim_scoreboard::type_id::create("scoreboard", this);
-    ifetch_monitor     = ibex_ifetch_monitor::type_id::create("ifetch_monitor", this);
-    ifetch_pmp_monitor = ibex_ifetch_pmp_monitor::type_id::create("ifetch_pmp_monitor", this);
+    rvfi_monitor       = ibex_xif_rvfi_monitor::type_id::create("rvfi_monitor", this);
+    scoreboard         = ibex_xif_cosim_scoreboard::type_id::create("scoreboard", this);
+    ifetch_monitor     = ibex_xif_ifetch_monitor::type_id::create("ifetch_monitor", this);
+    ifetch_pmp_monitor = ibex_xif_ifetch_pmp_monitor::type_id::create("ifetch_pmp_monitor", this);
   endfunction: build_phase
 
   virtual function void connect_phase(uvm_phase phase);
@@ -77,4 +77,4 @@ class ibex_cosim_agent extends uvm_agent;
     scoreboard.reset_e.trigger();
   endfunction : reset
 
-endclass : ibex_cosim_agent
+endclass : ibex_xif_cosim_agent
