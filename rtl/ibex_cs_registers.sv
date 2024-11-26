@@ -1097,9 +1097,9 @@ module ibex_xif_cs_registers #(
   if (PMPEnable) begin : g_pmp_registers
     // PMP reset values
     `ifdef IBEX_CUSTOM_PMP_RESET_VALUES
-      `include "ibex_xif_pmp_reset.svh"
+      `include "ibex_pmp_reset.svh"
     `else
-      `include "ibex_xif_pmp_reset_default.svh"
+      `include "ibex_pmp_reset_default.svh"
     `endif
 
     pmp_mseccfg_t                pmp_mseccfg_q, pmp_mseccfg_d;
